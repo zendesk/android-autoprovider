@@ -1,4 +1,4 @@
-package com.getbase.android.autocpuris;
+package com.getbase.android.autoprovider;
 
 import com.google.common.base.Optional;
 

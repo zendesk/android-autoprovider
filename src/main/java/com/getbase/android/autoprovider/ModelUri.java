@@ -1,4 +1,4 @@
-package com.getbase.android.autocpuris;
+package com.getbase.android.autoprovider;
 
 interface ModelUri extends AutoUri, EntityUriBuilder, AutoUriRelationBuilder<ModelUri> {
 }
