@@ -14,8 +14,8 @@ public class AutoUris<TModel extends DbTableModel & MicroOrmModel> implements Mo
     mModelGraph = modelGraph;
   }
 
-  public static <T extends DbTableModel & MicroOrmModel> AutoUris from(ModelGraph<T> modelGraph) {
-    return new AutoUris(modelGraph);
+  public static <T extends DbTableModel & MicroOrmModel> AutoUris<T> from(ModelGraph<T> modelGraph) {
+    return new AutoUris<T>(modelGraph);
   }
 
   @Override
