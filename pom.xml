@@ -23,6 +23,21 @@
       <version>16.0</version>
     </dependency>
     <dependency>
+      <groupId>org.chalup.thneed</groupId>
+      <artifactId>thneed</artifactId>
+      <version>0.5</version>
+    </dependency>
+    <dependency>
+      <groupId>com.getbase.autoindexer</groupId>
+      <artifactId>autoindexer</artifactId>
+      <version>0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>com.getbase.forger</groupId>
+      <artifactId>forger</artifactId>
+      <version>0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
       <groupId>org.robolectric</groupId>
       <artifactId>robolectric</artifactId>
       <version>2.2</version>
