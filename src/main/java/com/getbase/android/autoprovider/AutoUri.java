@@ -4,14 +4,14 @@ import com.google.common.base.Optional;
 
 import android.net.Uri;
 
-import java.util.List;
+import java.util.Collection;
 
 interface AutoUri {
   Uri toUri();
 
   ModelUri getModelUri();
 
-  List<EntityUri> getRelatedEntities();
+  Collection<EntityUri> getRelatedEntities();
 
   Optional<EntityUri> getRelatedEntity(Class<?> model);
 }

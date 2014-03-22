@@ -13,7 +13,7 @@ import org.chalup.thneed.ModelVisitor;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
-import java.util.List;
+import java.util.Collection;
 
 public class AutoUris<TModel extends DbTableModel & MicroOrmModel> implements ModelUriBuilder {
   private final ModelGraph<TModel> mModelGraph;
@@ -65,7 +65,7 @@ public class AutoUris<TModel extends DbTableModel & MicroOrmModel> implements Mo
 
   private abstract class AutoUriImpl implements AutoUri {
     @Override
-    public List<EntityUri> getRelatedEntities() {
+    public Collection<EntityUri> getRelatedEntities() {
       return null;
     }
 
