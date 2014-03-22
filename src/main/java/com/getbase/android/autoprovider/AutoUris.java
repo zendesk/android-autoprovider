@@ -6,6 +6,8 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import org.chalup.thneed.ModelGraph;
 import org.chalup.thneed.ModelVisitor;
@@ -14,6 +16,7 @@ import android.net.Uri;
 import android.provider.BaseColumns;
 
 import java.util.Collection;
+import java.util.Map;
 
 public class AutoUris<TModel extends DbTableModel & MicroOrmModel> implements ModelUriBuilder {
   private final ModelGraph<TModel> mModelGraph;
@@ -64,14 +67,25 @@ public class AutoUris<TModel extends DbTableModel & MicroOrmModel> implements Mo
   }
 
   private abstract class AutoUriImpl implements AutoUri {
+    protected Map<Class<?>, EntityUri> mRelatedEntities;
+
+    protected AutoUriImpl() {
+      mRelatedEntities = Maps.newHashMap();
+    }
+
+    protected AutoUriImpl(AutoUriImpl other) {
+      mRelatedEntities = Maps.newHashMap(other.mRelatedEntities);
+    }
+
     @Override
     public Collection<EntityUri> getRelatedEntities() {
-      return null;
+      return Lists.newCopyOnWriteArrayList(mRelatedEntities.values());
     }
 
     @Override
     public Optional<EntityUri> getRelatedEntity(Class<?> model) {
-      return null;
+      Preconditions.checkNotNull(model);
+      return Optional.fromNullable(mRelatedEntities.get(model));
     }
   }
 
@@ -83,6 +97,7 @@ public class AutoUris<TModel extends DbTableModel & MicroOrmModel> implements Mo
     }
 
     ModelUriImpl(ModelUriImpl other) {
+      super(other);
       mKlass = other.mKlass;
     }
 
@@ -103,7 +118,12 @@ public class AutoUris<TModel extends DbTableModel & MicroOrmModel> implements Mo
 
     @Override
     public ModelUri relatedTo(EntityUri uri) {
-      return null;
+      Preconditions.checkNotNull(uri);
+      ModelUriImpl modelUri = new ModelUriImpl(this);
+      Class<?> relationModel = uri.getModelUri().getModel();
+      EntityUri previousValue = modelUri.mRelatedEntities.put(relationModel, uri);
+      Preconditions.checkArgument(previousValue == null, "Duplicate relation for model %s", relationModel.getSimpleName());
+      return modelUri;
     }
 
     @Override
@@ -128,6 +148,13 @@ public class AutoUris<TModel extends DbTableModel & MicroOrmModel> implements Mo
       mId = id;
     }
 
+    EntityUriImpl(EntityUriImpl other) {
+      super(other);
+      mModelUri = other.mModelUri;
+      mIdColumnName = other.mIdColumnName;
+      mId = other.mId;
+    }
+
     @Override
     public long getId() {
       return mId;
@@ -150,7 +177,12 @@ public class AutoUris<TModel extends DbTableModel & MicroOrmModel> implements Mo
 
     @Override
     public EntityUri relatedTo(EntityUri uri) {
-      return null;
+      Preconditions.checkNotNull(uri);
+      EntityUriImpl entityUri = new EntityUriImpl(this);
+      Class<?> relationModel = uri.getModelUri().getModel();
+      EntityUri previousValue = entityUri.mRelatedEntities.put(relationModel, uri);
+      Preconditions.checkArgument(previousValue == null, "Duplicate relation for model %s", relationModel.getSimpleName());
+      return entityUri;
     }
 
     @Override
