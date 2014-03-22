@@ -145,7 +145,7 @@ public class AutoUris<TModel extends DbTableModel & MicroOrmModel> implements Mo
 
     @Override
     public ModelUri getModelUri() {
-      return new ModelUriImpl(mModelUri);
+      return mModelUri;
     }
 
     @Override
