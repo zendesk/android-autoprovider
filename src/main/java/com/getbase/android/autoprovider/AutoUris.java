@@ -2,6 +2,7 @@ package com.getbase.android.autoprovider;
 
 import com.getbase.autoindexer.DbTableModel;
 import com.getbase.forger.thneed.MicroOrmModel;
+import com.google.common.base.Objects;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.BiMap;
@@ -87,6 +88,22 @@ public class AutoUris<TModel extends DbTableModel & MicroOrmModel> implements Mo
       Preconditions.checkNotNull(model);
       return Optional.fromNullable(mRelatedEntities.get(model));
     }
+
+    @Override
+    public int hashCode() {
+      return Objects.hashCode(mRelatedEntities);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+      if (this == obj) return true;
+
+      if (obj == null) return false;
+      if (getClass() != obj.getClass()) return false;
+
+      final AutoUriImpl other = (AutoUriImpl) obj;
+      return Objects.equal(this.mRelatedEntities, other.mRelatedEntities);
+    }
   }
 
   private class ModelUriImpl extends AutoUriImpl implements ModelUri {
@@ -134,6 +151,23 @@ public class AutoUris<TModel extends DbTableModel & MicroOrmModel> implements Mo
     @Override
     public EntityUri id(String column, long id) {
       return new EntityUriImpl(new ModelUriImpl(this), column, id);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hashCode(mKlass, super.hashCode());
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null) return false;
+      if (getClass() != obj.getClass()) return false;
+      if (!super.equals(obj)) return false;
+
+      final ModelUriImpl other = (ModelUriImpl) obj;
+
+      return Objects.equal(this.mKlass, other.mKlass);
     }
   }
 
@@ -188,6 +222,25 @@ public class AutoUris<TModel extends DbTableModel & MicroOrmModel> implements Mo
     @Override
     public ModelUri model(Class<?> klass) {
       return null;
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hashCode(mModelUri, mIdColumnName, mId, super.hashCode());
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null) return false;
+      if (getClass() != obj.getClass()) return false;
+      if (!super.equals(obj)) return false;
+
+      final EntityUriImpl other = (EntityUriImpl) obj;
+
+      return Objects.equal(this.mModelUri, other.mModelUri) &&
+          Objects.equal(this.mIdColumnName, other.mIdColumnName) &&
+          Objects.equal(this.mId, other.mId);
     }
   }
 
