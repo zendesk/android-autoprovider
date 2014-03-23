@@ -18,7 +18,7 @@ import java.util.Collection;
 
 @RunWith(RobolectricTestRunner.class)
 @Config(manifest = Config.NONE)
-public class RelationBuildingTest {
+public class RelatedToTest {
 
   private AutoUris<TestModel> mAutoUris = AutoUris.from(MODEL_GRAPH).build();
 
