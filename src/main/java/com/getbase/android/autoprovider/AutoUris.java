@@ -6,24 +6,35 @@ import com.google.common.base.Objects;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.BiMap;
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableBiMap;
+import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
 
+import org.chalup.thneed.ManyToManyRelationship;
 import org.chalup.thneed.ModelGraph;
 import org.chalup.thneed.ModelVisitor;
+import org.chalup.thneed.OneToManyRelationship;
+import org.chalup.thneed.OneToOneRelationship;
+import org.chalup.thneed.PolymorphicRelationship;
+import org.chalup.thneed.RecursiveModelRelationship;
+import org.chalup.thneed.RelationshipVisitor;
 
 import android.net.Uri;
 import android.provider.BaseColumns;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Map.Entry;
 
 public class AutoUris<TModel extends DbTableModel & MicroOrmModel> implements ModelUriBuilder {
   private final ModelGraph<TModel> mModelGraph;
   private final String mIdColumnName;
 
   private final BiMap<Class<?>, String> mClassToTableMap;
+  private final Multimap<Class<?>, Class<?>> mRelationsByClasses;
 
   AutoUris(ModelGraph<TModel> modelGraph, String idColumnName) {
     mModelGraph = modelGraph;
@@ -37,6 +48,61 @@ public class AutoUris<TModel extends DbTableModel & MicroOrmModel> implements Mo
       }
     });
     mClassToTableMap = classToTableMappingBuilder.build();
+
+    final HashMultimap<Class<?>, Class<?>> relationsByClass = HashMultimap.create();
+    final Map<Class<?>, Class<?>> unsupportedRelations = Maps.newHashMap();
+    mModelGraph.accept(new RelationshipVisitor<TModel>() {
+      @Override
+      public void visit(OneToManyRelationship<? extends TModel> relationship) {
+        TModel manyModel = relationship.mModel;
+        TModel oneModel = relationship.mReferencedModel;
+
+        if (!relationsByClass.put(manyModel.getModelClass(), oneModel.getModelClass())) {
+          unsupportedRelations.put(manyModel.getModelClass(), oneModel.getModelClass());
+        }
+      }
+
+      @Override
+      public void visit(OneToOneRelationship<? extends TModel> relationship) {
+        TModel model = relationship.mModel;
+        TModel linkedModel = relationship.mLinkedModel;
+
+        if (!relationsByClass.put(linkedModel.getModelClass(), model.getModelClass())) {
+          unsupportedRelations.put(linkedModel.getModelClass(), model.getModelClass());
+        }
+      }
+
+      @Override
+      public void visit(RecursiveModelRelationship<? extends TModel> relationship) {
+        TModel model = relationship.mModel;
+
+        if (!relationsByClass.put(model.getModelClass(), model.getModelClass())) {
+          unsupportedRelations.put(model.getModelClass(), model.getModelClass());
+        }
+      }
+
+      @Override
+      public void visit(ManyToManyRelationship<? extends TModel> relationship) {
+        // implementation not necessary
+      }
+
+      @Override
+      public void visit(PolymorphicRelationship<? extends TModel> relationship) {
+        TModel model = relationship.mModel;
+
+        for (TModel polyModel : relationship.mPolymorphicModels.values()) {
+          if (!relationsByClass.put(model.getModelClass(), polyModel.getModelClass())) {
+            unsupportedRelations.put(model.getModelClass(), polyModel.getModelClass());
+          }
+        }
+      }
+    });
+
+    for (Entry<Class<?>, Class<?>> unsupportedRelation : unsupportedRelations.entrySet()) {
+      relationsByClass.remove(unsupportedRelation.getKey(), unsupportedRelation.getValue());
+    }
+
+    mRelationsByClasses = ImmutableMultimap.copyOf(relationsByClass);
   }
 
   public static <T extends DbTableModel & MicroOrmModel> Builder<T> from(ModelGraph<T> modelGraph) {
@@ -138,6 +204,8 @@ public class AutoUris<TModel extends DbTableModel & MicroOrmModel> implements Mo
       Preconditions.checkNotNull(uri);
       ModelUriImpl modelUri = new ModelUriImpl(this);
       Class<?> relationModel = uri.getModelUri().getModel();
+      Class<?> model = getModel();
+      Preconditions.checkArgument(mRelationsByClasses.containsEntry(model, relationModel));
       EntityUri previousValue = modelUri.mRelatedEntities.put(relationModel, uri);
       Preconditions.checkArgument(previousValue == null, "Duplicate relation for model %s", relationModel.getSimpleName());
       return modelUri;
@@ -214,6 +282,8 @@ public class AutoUris<TModel extends DbTableModel & MicroOrmModel> implements Mo
       Preconditions.checkNotNull(uri);
       EntityUriImpl entityUri = new EntityUriImpl(this);
       Class<?> relationModel = uri.getModelUri().getModel();
+      Class<?> model = entityUri.getModelUri().getModel();
+      Preconditions.checkArgument(mRelationsByClasses.containsEntry(model, relationModel));
       EntityUri previousValue = entityUri.mRelatedEntities.put(relationModel, uri);
       Preconditions.checkArgument(previousValue == null, "Duplicate relation for model %s", relationModel.getSimpleName());
       return entityUri;

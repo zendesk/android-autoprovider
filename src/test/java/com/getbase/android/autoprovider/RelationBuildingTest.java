@@ -5,6 +5,7 @@ import static org.fest.assertions.Assertions.assertThat;
 
 import com.getbase.android.autoprovider.TestModels.Contact;
 import com.getbase.android.autoprovider.TestModels.Deal;
+import com.getbase.android.autoprovider.TestModels.Lead;
 import com.getbase.android.autoprovider.TestModels.TestModel;
 import com.getbase.android.autoprovider.TestModels.User;
 
@@ -64,6 +65,13 @@ public class RelationBuildingTest {
         .relatedTo(mAutoUris.model(Contact.class).id(2900));
   }
 
+  @Test(expected = IllegalArgumentException.class)
+  public void shouldRejectInvalidRelationOnModelUri() throws Exception {
+    mAutoUris
+        .model(Deal.class)
+        .relatedTo(mAutoUris.model(Lead.class).id(1500));
+  }
+
   @Test
   public void shouldAddRelationToEntityUri() throws Exception {
     EntityUri uri = mAutoUris.model(Contact.class).id(2900).relatedTo(mAutoUris.model(User.class).id(1500));
@@ -105,5 +113,12 @@ public class RelationBuildingTest {
         .model(Deal.class).id(42)
         .relatedTo(mAutoUris.model(Contact.class).id(1500))
         .relatedTo(mAutoUris.model(Contact.class).id(2900));
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void shouldRejectInvalidRelationOnEntityUri() throws Exception {
+    mAutoUris
+        .model(Deal.class).id(42)
+        .relatedTo(mAutoUris.model(Lead.class).id(1500));
   }
 }
