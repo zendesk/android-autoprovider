@@ -218,7 +218,9 @@ public class AutoUris<TModel extends DbTableModel & MicroOrmModel> implements Mo
 
     @Override
     public EntityUri id(String column, long id) {
-      return new EntityUriImpl(new ModelUriImpl(this), column, id);
+      EntityUriImpl entityUri = new EntityUriImpl(new ModelUriImpl(this), column, id);
+      entityUri.mRelatedEntities.putAll(mRelatedEntities);
+      return entityUri;
     }
 
     @Override
@@ -291,7 +293,7 @@ public class AutoUris<TModel extends DbTableModel & MicroOrmModel> implements Mo
 
     @Override
     public ModelUri model(Class<?> klass) {
-      return null;
+      return AutoUris.this.model(klass).relatedTo(this);
     }
 
     @Override
