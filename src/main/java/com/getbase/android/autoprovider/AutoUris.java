@@ -31,13 +31,15 @@ import java.util.Map.Entry;
 
 public class AutoUris<TModel extends DbTableModel & MicroOrmModel> implements ModelUriBuilder {
   private final ModelGraph<TModel> mModelGraph;
+  private final String mAuthority;
   private final String mIdColumnName;
 
   private final BiMap<Class<?>, String> mClassToTableMap;
   private final Multimap<Class<?>, Class<?>> mRelationsByClasses;
 
-  AutoUris(ModelGraph<TModel> modelGraph, String idColumnName) {
+  AutoUris(ModelGraph<TModel> modelGraph, String authority, String idColumnName) {
     mModelGraph = modelGraph;
+    mAuthority = authority;
     mIdColumnName = idColumnName;
 
     final ImmutableBiMap.Builder<Class<?>, String> classToTableMappingBuilder = ImmutableBiMap.builder();
@@ -105,13 +107,14 @@ public class AutoUris<TModel extends DbTableModel & MicroOrmModel> implements Mo
     mRelationsByClasses = ImmutableMultimap.copyOf(relationsByClass);
   }
 
-  public static <T extends DbTableModel & MicroOrmModel> Builder<T> from(ModelGraph<T> modelGraph) {
+  public static <T extends DbTableModel & MicroOrmModel> AuthoritySelector<T> from(ModelGraph<T> modelGraph) {
     return new Builder<T>(modelGraph);
   }
 
-  public static class Builder<TModel extends DbTableModel & MicroOrmModel> {
+  public static class Builder<TModel extends DbTableModel & MicroOrmModel> implements AuthoritySelector<TModel> {
     private final ModelGraph<TModel> mModelGraph;
     private String mIdColumnName = BaseColumns._ID;
+    private String mAuthority;
 
     Builder(ModelGraph<TModel> modelGraph) {
       mModelGraph = modelGraph;
@@ -123,8 +126,18 @@ public class AutoUris<TModel extends DbTableModel & MicroOrmModel> implements Mo
     }
 
     public AutoUris<TModel> build() {
-      return new AutoUris<TModel>(mModelGraph, mIdColumnName);
+      return new AutoUris<TModel>(mModelGraph, mAuthority, mIdColumnName);
     }
+
+    @Override
+    public Builder<TModel> forContentProvider(String authority) {
+      mAuthority = authority;
+      return this;
+    }
+  }
+
+  public interface AuthoritySelector<TModel extends DbTableModel & MicroOrmModel> {
+    Builder<TModel> forContentProvider(String authority);
   }
 
   @Override

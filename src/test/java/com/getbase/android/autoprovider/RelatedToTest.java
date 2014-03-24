@@ -22,6 +22,7 @@ public class RelatedToTest {
 
   private AutoUris<TestModel> mAutoUris = AutoUris
       .from(MODEL_GRAPH)
+      .forContentProvider(TestModels.AUTHORITY)
       .build();
 
   @Test

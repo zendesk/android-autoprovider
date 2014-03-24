@@ -19,7 +19,7 @@ public class AutoUrisBuilderTest {
 
   @Test
   public void autoUrisShouldUseAndroidsBaseColumnsIdAsDefaultIdColumnIfNotSpecified() throws Exception {
-    AutoUris<TestModel> autoUris = AutoUris.from(MODEL_GRAPH).build();
+    AutoUris<TestModel> autoUris = AutoUris.from(MODEL_GRAPH).forContentProvider(TestModels.AUTHORITY).build();
     EntityUri entityUri = autoUris.model(Contact.class).id(1500);
 
     assertThat(entityUri.getIdColumn()).isEqualTo(BaseColumns._ID);
@@ -27,7 +27,7 @@ public class AutoUrisBuilderTest {
 
   @Test
   public void autoUrisShouldUseUserDefinedIdColumnAsDefaultForEntityUris() throws Exception {
-    AutoUris<TestModel> autoUris = AutoUris.from(MODEL_GRAPH).defaultIdColumn("das_id").build();
+    AutoUris<TestModel> autoUris = AutoUris.from(MODEL_GRAPH).forContentProvider(TestModels.AUTHORITY).defaultIdColumn("das_id").build();
     EntityUri entityUri = autoUris.model(Contact.class).id(1500);
 
     assertThat(entityUri.getIdColumn()).isEqualTo("das_id");

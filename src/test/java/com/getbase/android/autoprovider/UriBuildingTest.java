@@ -19,6 +19,7 @@ public class UriBuildingTest {
 
   private final AutoUris<TestModel> mAutoUris = AutoUris
       .from(MODEL_GRAPH)
+      .forContentProvider(TestModels.AUTHORITY)
       .build();
 
   @Test(expected = IllegalArgumentException.class)

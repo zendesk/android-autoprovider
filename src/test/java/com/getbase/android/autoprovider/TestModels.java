@@ -18,6 +18,8 @@ public final class TestModels {
   private TestModels() {
   }
 
+  public static final String AUTHORITY = "com.getbase.android.autoprovider.testprovider";
+
   public static class BaseModel {
     @Column(value = BaseColumns._ID, readonly = true)
     public long _id;
