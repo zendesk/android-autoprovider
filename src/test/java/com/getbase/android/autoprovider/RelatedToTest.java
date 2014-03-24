@@ -20,7 +20,9 @@ import java.util.Collection;
 @Config(manifest = Config.NONE)
 public class RelatedToTest {
 
-  private AutoUris<TestModel> mAutoUris = AutoUris.from(MODEL_GRAPH).build();
+  private AutoUris<TestModel> mAutoUris = AutoUris
+      .from(MODEL_GRAPH)
+      .build();
 
   @Test
   public void shouldAddRelationToModelUri() throws Exception {

@@ -17,7 +17,9 @@ import org.robolectric.annotation.Config;
 @Config(manifest = Config.NONE)
 public class PathRelationsTest {
 
-  private AutoUris<TestModel> mAutoUris = AutoUris.from(MODEL_GRAPH).build();
+  private AutoUris<TestModel> mAutoUris = AutoUris
+      .from(MODEL_GRAPH)
+      .build();
 
   @Test
   public void addingModelShouldCreateRelationToEntityUri() throws Exception {

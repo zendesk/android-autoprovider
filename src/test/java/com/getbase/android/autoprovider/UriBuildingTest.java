@@ -17,25 +17,25 @@ import android.provider.BaseColumns;
 @Config(manifest = Config.NONE)
 public class UriBuildingTest {
 
+  private final AutoUris<TestModel> mAutoUris = AutoUris
+      .from(MODEL_GRAPH)
+      .build();
+
   @Test(expected = IllegalArgumentException.class)
   public void shouldRejectClassOutsideOfModelGraph() throws Exception {
-    AutoUris<TestModel> autoUris = AutoUris.from(MODEL_GRAPH).build();
-
-    autoUris.model(String.class);
+    mAutoUris.model(String.class);
   }
 
   @Test
   public void shouldBuildSimpleModelUri() throws Exception {
-    AutoUris<TestModel> autoUris = AutoUris.from(MODEL_GRAPH).build();
-    ModelUri modelUri = autoUris.model(Contact.class);
+    ModelUri modelUri = mAutoUris.model(Contact.class);
 
     assertThat(modelUri.getModel()).isEqualTo(Contact.class);
   }
 
   @Test
   public void shouldBuildEntityUriWithDefaultIdColumnName() throws Exception {
-    AutoUris<TestModel> autoUris = AutoUris.from(MODEL_GRAPH).build();
-    EntityUri entityUri = autoUris.model(Contact.class).id(1500);
+    EntityUri entityUri = mAutoUris.model(Contact.class).id(1500);
 
     assertThat(entityUri.getId()).isEqualTo(1500);
     assertThat(entityUri.getIdColumn()).isEqualTo(BaseColumns._ID);
@@ -44,8 +44,7 @@ public class UriBuildingTest {
 
   @Test
   public void shouldBuildEntityUriWithCustomIdColumnName() throws Exception {
-    AutoUris<TestModel> autoUris = AutoUris.from(MODEL_GRAPH).build();
-    EntityUri entityUri = autoUris.model(Contact.class).id("id", 1500);
+    EntityUri entityUri = mAutoUris.model(Contact.class).id("id", 1500);
 
     assertThat(entityUri.getId()).isEqualTo(1500);
     assertThat(entityUri.getIdColumn()).isEqualTo("id");
