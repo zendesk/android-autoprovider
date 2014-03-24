@@ -2,6 +2,7 @@ package com.getbase.android.autoprovider;
 
 import com.getbase.autoindexer.DbTableModel;
 import com.getbase.forger.thneed.MicroOrmModel;
+import com.google.common.base.Joiner;
 import com.google.common.base.Objects;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
@@ -252,6 +253,15 @@ public class AutoUris<TModel extends DbTableModel & MicroOrmModel> implements Mo
 
       return Objects.equal(this.mKlass, other.mKlass);
     }
+
+    @Override
+    public String toString() {
+      return Objects
+          .toStringHelper(this)
+          .add("model", getModel().getSimpleName())
+          .add("relatedTo", Joiner.on(", ").withKeyValueSeparator(": ").join(mRelatedEntities))
+          .toString();
+    }
   }
 
   private class EntityUriImpl extends AutoUriImpl implements EntityUri {
@@ -326,6 +336,17 @@ public class AutoUris<TModel extends DbTableModel & MicroOrmModel> implements Mo
       return Objects.equal(this.mModelUri, other.mModelUri) &&
           Objects.equal(this.mIdColumnName, other.mIdColumnName) &&
           Objects.equal(this.mId, other.mId);
+    }
+
+    @Override
+    public String toString() {
+      return Objects
+          .toStringHelper(this)
+          .add("id", mId)
+          .add("idColumn", mIdColumnName)
+          .add("model", getModelUri().getModel().getSimpleName())
+          .add("relatedTo", Joiner.on(", ").withKeyValueSeparator(": ").join(mRelatedEntities))
+          .toString();
     }
   }
 
