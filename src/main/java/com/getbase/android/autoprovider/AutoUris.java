@@ -2,11 +2,13 @@ package com.getbase.android.autoprovider;
 
 import com.getbase.autoindexer.DbTableModel;
 import com.getbase.forger.thneed.MicroOrmModel;
+import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Objects;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.BiMap;
+import com.google.common.collect.FluentIterable;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableMultimap;
@@ -23,14 +25,19 @@ import org.chalup.thneed.PolymorphicRelationship;
 import org.chalup.thneed.RecursiveModelRelationship;
 import org.chalup.thneed.RelationshipVisitor;
 
+import android.content.ContentResolver;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
 public class AutoUris<TModel extends DbTableModel & MicroOrmModel> implements ModelUriBuilder {
+  public static final String RELATED_TO_QUERY_PARAM = "relatedTo";
+  public static final String ID_COLUMN_QUERY_PARAM = "idColumn";
+
   private final ModelGraph<TModel> mModelGraph;
   private final String mAuthority;
   private final String mIdColumnName;
@@ -185,10 +192,32 @@ public class AutoUris<TModel extends DbTableModel & MicroOrmModel> implements Mo
       final AutoUriImpl other = (AutoUriImpl) obj;
       return Objects.equal(this.mRelatedEntities, other.mRelatedEntities);
     }
+
+    protected boolean appendRelationsAsPath(Uri.Builder builder) {
+      if (mRelatedEntities.size() == 1) {
+        EntityUri entityUri = mRelatedEntities.values().iterator().next();
+        if (entityUri.getIdColumn().equals(mIdColumnName)) {
+          if (entityUri.getRelatedEntities().isEmpty()) {
+            builder
+                .appendPath(mClassToTableMap.get(entityUri.getModelUri().getModel()))
+                .appendPath(String.valueOf(entityUri.getId()));
+
+            return true;
+          }
+        }
+      }
+      return false;
+    }
+
+    protected void appendRelationsAsParams(Uri.Builder builder) {
+      for (EntityUri relatedEntityUri : mRelatedEntities.values()) {
+        builder.appendQueryParameter(RELATED_TO_QUERY_PARAM, relatedEntityUri.toUri().toString());
+      }
+    }
   }
 
   private class ModelUriImpl extends AutoUriImpl implements ModelUri {
-    private final Class<?> mKlass;
+    final Class<?> mKlass;
 
     ModelUriImpl(Class<?> klass) {
       mKlass = klass;
@@ -206,7 +235,17 @@ public class AutoUris<TModel extends DbTableModel & MicroOrmModel> implements Mo
 
     @Override
     public Uri toUri() {
-      return null;
+      Uri.Builder builder = new Uri.Builder()
+          .scheme(ContentResolver.SCHEME_CONTENT)
+          .authority(mAuthority);
+
+      if (!appendRelationsAsPath(builder)) {
+        appendRelationsAsParams(builder);
+      }
+
+      return builder
+          .appendPath(mClassToTableMap.get(getModel()))
+          .build();
     }
 
     @Override
@@ -295,7 +334,19 @@ public class AutoUris<TModel extends DbTableModel & MicroOrmModel> implements Mo
 
     @Override
     public Uri toUri() {
-      return null;
+      Uri.Builder builder = new Uri.Builder()
+          .scheme(ContentResolver.SCHEME_CONTENT)
+          .authority(mAuthority)
+          .appendPath(mClassToTableMap.get(getModelUri().getModel()))
+          .appendPath(String.valueOf(getId()));
+
+      appendRelationsAsParams(builder);
+
+      if (!AutoUris.this.mIdColumnName.equals(mIdColumnName)) {
+        builder.appendQueryParameter(ID_COLUMN_QUERY_PARAM, mIdColumnName);
+      }
+
+      return builder.build();
     }
 
     @Override
@@ -356,7 +407,71 @@ public class AutoUris<TModel extends DbTableModel & MicroOrmModel> implements Mo
     }
   }
 
-  public AutoUri fromUri(Uri uri) {
-    return null;
+  private void checkUri(Uri uri) {
+    Preconditions.checkNotNull(uri);
+    Preconditions.checkArgument(uri.getScheme().equals(ContentResolver.SCHEME_CONTENT));
+    Preconditions.checkArgument(uri.getAuthority().equals(mAuthority));
+  }
+
+  public ModelUri getModelUri(Uri uri) {
+    checkUri(uri);
+
+    List<EntityUri> relatedEntities = getRelatedEntities(uri);
+
+    List<String> pathSegments = uri.getPathSegments();
+    switch (pathSegments.size()) {
+    case 1:
+      break;
+    case 3:
+      relatedEntities.add(
+          model(mClassToTableMap.inverse().get(pathSegments.get(0)))
+              .id(Long.parseLong(pathSegments.get(1)))
+      );
+      break;
+    default:
+      throw new IllegalArgumentException("Invalid number of path segments");
+    }
+
+    return appendRelatedEntities(
+        model(mClassToTableMap.inverse().get(uri.getLastPathSegment())),
+        relatedEntities
+    );
+  }
+
+  public EntityUri getEntityUri(Uri uri) {
+    checkUri(uri);
+
+    List<String> pathSegments = uri.getPathSegments();
+    Preconditions.checkArgument(pathSegments.size() == 2, "Invalid number of path segments");
+
+    return appendRelatedEntities(
+        model(mClassToTableMap.inverse().get(pathSegments.get(0)))
+            .id(getIdColumn(uri), Long.parseLong(pathSegments.get(1))),
+        getRelatedEntities(uri)
+    );
+  }
+
+  private List<EntityUri> getRelatedEntities(Uri uri) {
+    return Lists.newArrayList(
+        FluentIterable
+            .from(uri.getQueryParameters(RELATED_TO_QUERY_PARAM))
+            .transform(new Function<String, EntityUri>() {
+              @Override
+              public EntityUri apply(String input) {
+                return getEntityUri(Uri.parse(input));
+              }
+            })
+    );
+  }
+
+  private String getIdColumn(Uri uri) {
+    return Objects.firstNonNull(uri.getQueryParameter(ID_COLUMN_QUERY_PARAM), mIdColumnName);
+  }
+
+  private <T extends AutoUriRelationBuilder<T> & AutoUri> T appendRelatedEntities(T modelOrEntityUri, Iterable<EntityUri> relatedEntities) {
+    for (EntityUri relatedEntity : relatedEntities) {
+      modelOrEntityUri = modelOrEntityUri.relatedTo(relatedEntity);
+    }
+    return modelOrEntityUri;
   }
 }
