@@ -119,6 +119,10 @@ public class AutoUris<TModel extends DbTableModel & MicroOrmModel> implements Mo
     return new Builder<T>(modelGraph);
   }
 
+  public String getAuthority() {
+    return mAuthority;
+  }
+
   public static class Builder<TModel extends DbTableModel & MicroOrmModel> implements AuthoritySelector<TModel> {
     private final ModelGraph<TModel> mModelGraph;
     private String mIdColumnName = BaseColumns._ID;
@@ -231,6 +235,11 @@ public class AutoUris<TModel extends DbTableModel & MicroOrmModel> implements Mo
     @Override
     public Class<?> getModel() {
       return mKlass;
+    }
+
+    @Override
+    public <T> T accept(AutoUriVisitor<T> visitor) {
+      return visitor.visit(this);
     }
 
     @Override
@@ -357,6 +366,11 @@ public class AutoUris<TModel extends DbTableModel & MicroOrmModel> implements Mo
     @Override
     public Class<?> getModel() {
       return mKlass;
+    }
+
+    @Override
+    public <T> T accept(AutoUriVisitor<T> visitor) {
+      return visitor.visit(this);
     }
 
     @Override

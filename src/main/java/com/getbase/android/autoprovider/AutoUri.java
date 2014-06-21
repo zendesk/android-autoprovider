@@ -16,4 +16,6 @@ public interface AutoUri {
   Collection<EntityUri> getRelatedEntities();
 
   Optional<EntityUri> getRelatedEntity(Class<?> model);
+
+  <T> T accept(AutoUriVisitor<T> visitor);
 }

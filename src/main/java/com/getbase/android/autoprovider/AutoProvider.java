@@ -12,13 +12,16 @@ import android.net.Uri;
 
 public class AutoProvider<TModel extends DbTableModel & MicroOrmModel> {
   private final AutoUris<TModel> mAutoUris;
+  private final ContentTypeVisitor mContentTypeVisitor;
 
   public AutoProvider(AutoUris<TModel> autoUris) {
     mAutoUris = autoUris;
+
+    mContentTypeVisitor = new ContentTypeVisitor(mAutoUris.getAuthority());
   }
 
   public String getType(Uri uri) {
-    return null;
+    return mAutoUris.getAutoUri(uri).get().accept(mContentTypeVisitor);
   }
 
   public Query query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
