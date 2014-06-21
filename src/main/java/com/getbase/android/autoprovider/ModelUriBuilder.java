@@ -1,5 +1,5 @@
 package com.getbase.android.autoprovider;
 
-interface ModelUriBuilder {
+public interface ModelUriBuilder {
   ModelUri model(Class<?> klass);
 }

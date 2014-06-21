@@ -6,7 +6,7 @@ import android.net.Uri;
 
 import java.util.Collection;
 
-interface AutoUri {
+public interface AutoUri {
   Uri toUri();
 
   ModelUri getModelUri();

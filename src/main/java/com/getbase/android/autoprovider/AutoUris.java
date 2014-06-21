@@ -35,8 +35,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 public class AutoUris<TModel extends DbTableModel & MicroOrmModel> implements ModelUriBuilder {
-  public static final String RELATED_TO_QUERY_PARAM = "relatedTo";
-  public static final String ID_COLUMN_QUERY_PARAM = "idColumn";
+  private static final String RELATED_TO_QUERY_PARAM = "relatedTo";
+  private static final String ID_COLUMN_QUERY_PARAM = "idColumn";
 
   private final ModelGraph<TModel> mModelGraph;
   private final String mAuthority;
