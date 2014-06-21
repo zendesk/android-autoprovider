@@ -30,7 +30,7 @@ public class PathRelationsTest {
 
     Optional<EntityUri> relatedContact = dealsForContact.getRelatedEntity(Contact.class);
     assertThat(relatedContact.isPresent()).isTrue();
-    assertThat(relatedContact.get().getModelUri().getModel()).isEqualTo(Contact.class);
+    assertThat(relatedContact.get().getModel()).isEqualTo(Contact.class);
     assertThat(relatedContact.get().getId()).isEqualTo(1500);
   }
 
@@ -42,7 +42,7 @@ public class PathRelationsTest {
 
     Optional<EntityUri> relatedContact = dealUri.getRelatedEntity(Contact.class);
     assertThat(relatedContact.isPresent()).isTrue();
-    assertThat(relatedContact.get().getModelUri().getModel()).isEqualTo(Contact.class);
+    assertThat(relatedContact.get().getModel()).isEqualTo(Contact.class);
     assertThat(relatedContact.get().getId()).isEqualTo(1500);
   }
 }

@@ -303,6 +303,11 @@ public class AutoUris<TModel extends DbTableModel & MicroOrmModel> implements Mo
     }
 
     @Override
+    public Class<?> getModel() {
+      return mModelUri.getModel();
+    }
+
+    @Override
     public EntityUri relatedTo(EntityUri uri) {
       Preconditions.checkNotNull(uri);
       EntityUriImpl entityUri = new EntityUriImpl(this);

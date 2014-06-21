@@ -11,6 +11,8 @@ interface AutoUri {
 
   ModelUri getModelUri();
 
+  Class<?> getModel();
+
   Collection<EntityUri> getRelatedEntities();
 
   Optional<EntityUri> getRelatedEntity(Class<?> model);

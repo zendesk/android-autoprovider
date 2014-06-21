@@ -40,7 +40,7 @@ public class UriBuildingTest {
 
     assertThat(entityUri.getId()).isEqualTo(1500);
     assertThat(entityUri.getIdColumn()).isEqualTo(BaseColumns._ID);
-    assertThat(entityUri.getModelUri().getModel()).isEqualTo(Contact.class);
+    assertThat(entityUri.getModel()).isEqualTo(Contact.class);
   }
 
   @Test
@@ -49,6 +49,6 @@ public class UriBuildingTest {
 
     assertThat(entityUri.getId()).isEqualTo(1500);
     assertThat(entityUri.getIdColumn()).isEqualTo("id");
-    assertThat(entityUri.getModelUri().getModel()).isEqualTo(Contact.class);
+    assertThat(entityUri.getModel()).isEqualTo(Contact.class);
   }
 }
