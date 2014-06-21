@@ -143,7 +143,8 @@ public class AutoUris<TModel extends DbTableModel & MicroOrmModel> implements Mo
 
   @Override
   public ModelUri model(Class<?> klass) {
-    Preconditions.checkArgument(mClassToTableMap.containsKey(klass));
+    Preconditions.checkNotNull(klass);
+    Preconditions.checkArgument(mClassToTableMap.containsKey(klass), "Model %s is not present in supplied model graph", klass.getSimpleName());
     return new ModelUriImpl(klass);
   }
 
