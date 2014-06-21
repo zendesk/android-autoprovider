@@ -40,8 +40,8 @@ public class RelatedToTest {
         .relatedTo(mAutoUris.model(User.class).id(2900));
 
     Collection<EntityUri> relatedEntities = uri.getRelatedEntities();
-    relatedEntities.contains(mAutoUris.model(Contact.class).id(1500));
-    relatedEntities.contains(mAutoUris.model(User.class).id(2900));
+    assertThat(relatedEntities).contains(mAutoUris.model(Contact.class).id(1500));
+    assertThat(relatedEntities).contains(mAutoUris.model(User.class).id(2900));
   }
 
   @Test
@@ -90,8 +90,8 @@ public class RelatedToTest {
         .relatedTo(mAutoUris.model(User.class).id(2900));
 
     Collection<EntityUri> relatedEntities = uri.getRelatedEntities();
-    relatedEntities.contains(mAutoUris.model(Contact.class).id(1500));
-    relatedEntities.contains(mAutoUris.model(User.class).id(2900));
+    assertThat(relatedEntities).contains(mAutoUris.model(Contact.class).id(1500));
+    assertThat(relatedEntities).contains(mAutoUris.model(User.class).id(2900));
   }
 
   @Test
