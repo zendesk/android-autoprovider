@@ -451,6 +451,25 @@ public class AutoUris<TModel extends DbTableModel & MicroOrmModel> implements Mo
     );
   }
 
+  public Optional<AutoUri> getAutoUri(Uri uri) {
+    if (uri == null)
+      return Optional.absent();
+
+    try {
+      switch (uri.getPathSegments().size()) {
+      case 1: // fallthrough
+      case 3:
+        return Optional.<AutoUri>of(getModelUri(uri));
+      case 2:
+        return Optional.<AutoUri>of(getEntityUri(uri));
+      default:
+        return Optional.absent();
+      }
+    } catch (IllegalArgumentException e) {
+      return Optional.absent();
+    }
+  }
+
   private List<EntityUri> getRelatedEntities(Uri uri) {
     return Lists.newArrayList(
         FluentIterable
