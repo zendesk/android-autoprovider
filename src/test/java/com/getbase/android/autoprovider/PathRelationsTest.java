@@ -6,6 +6,7 @@ import static org.fest.assertions.Assertions.assertThat;
 import com.getbase.android.autoprovider.TestModels.Contact;
 import com.getbase.android.autoprovider.TestModels.Deal;
 import com.getbase.android.autoprovider.TestModels.TestModel;
+import com.getbase.android.autoprovider.TestModels.User;
 import com.google.common.base.Optional;
 
 import org.junit.Test;
@@ -44,5 +45,14 @@ public class PathRelationsTest {
     assertThat(relatedContact.isPresent()).isTrue();
     assertThat(relatedContact.get().getModel()).isEqualTo(Contact.class);
     assertThat(relatedContact.get().getId()).isEqualTo(1500);
+  }
+
+  @Test
+  public void shouldNotMatterIfRelatedToIsSpecifiedBeforeOrAfterId() throws Exception {
+    EntityUri userUri = mAutoUris.model(User.class).id(1500);
+    EntityUri afterIdUri = mAutoUris.model(Deal.class).id(2900).relatedTo(userUri);
+    EntityUri beforeIdUri = mAutoUris.model(Deal.class).relatedTo(userUri).id(2900);
+
+    assertThat(afterIdUri).isEqualTo(beforeIdUri);
   }
 }

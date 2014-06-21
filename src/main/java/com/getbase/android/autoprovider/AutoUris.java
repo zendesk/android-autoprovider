@@ -233,7 +233,7 @@ public class AutoUris<TModel extends DbTableModel & MicroOrmModel> implements Mo
 
     @Override
     public EntityUri id(String column, long id) {
-      EntityUriImpl entityUri = new EntityUriImpl(new ModelUriImpl(this), column, id);
+      EntityUriImpl entityUri = new EntityUriImpl(mKlass, column, id);
       entityUri.mRelatedEntities.putAll(mRelatedEntities);
       return entityUri;
     }
@@ -266,19 +266,19 @@ public class AutoUris<TModel extends DbTableModel & MicroOrmModel> implements Mo
   }
 
   private class EntityUriImpl extends AutoUriImpl implements EntityUri {
-    private final ModelUriImpl mModelUri;
+    private final Class<?> mKlass;
     private final String mIdColumnName;
     private final long mId;
 
-    EntityUriImpl(ModelUriImpl modelUri, String idColumnName, long id) {
-      mModelUri = modelUri;
+    EntityUriImpl(Class<?> klass, String idColumnName, long id) {
+      mKlass = klass;
       mIdColumnName = idColumnName;
       mId = id;
     }
 
     EntityUriImpl(EntityUriImpl other) {
       super(other);
-      mModelUri = other.mModelUri;
+      mKlass = other.mKlass;
       mIdColumnName = other.mIdColumnName;
       mId = other.mId;
     }
@@ -300,12 +300,12 @@ public class AutoUris<TModel extends DbTableModel & MicroOrmModel> implements Mo
 
     @Override
     public ModelUri getModelUri() {
-      return mModelUri;
+      return new ModelUriImpl(mKlass);
     }
 
     @Override
     public Class<?> getModel() {
-      return mModelUri.getModel();
+      return mKlass;
     }
 
     @Override
@@ -327,7 +327,7 @@ public class AutoUris<TModel extends DbTableModel & MicroOrmModel> implements Mo
 
     @Override
     public int hashCode() {
-      return Objects.hashCode(mModelUri, mIdColumnName, mId, super.hashCode());
+      return Objects.hashCode(mKlass, mIdColumnName, mId, super.hashCode());
     }
 
     @Override
@@ -339,7 +339,7 @@ public class AutoUris<TModel extends DbTableModel & MicroOrmModel> implements Mo
 
       final EntityUriImpl other = (EntityUriImpl) obj;
 
-      return Objects.equal(this.mModelUri, other.mModelUri) &&
+      return Objects.equal(this.mKlass, other.mKlass) &&
           Objects.equal(this.mIdColumnName, other.mIdColumnName) &&
           Objects.equal(this.mId, other.mId);
     }
