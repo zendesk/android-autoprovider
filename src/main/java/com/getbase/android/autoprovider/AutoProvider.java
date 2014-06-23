@@ -7,17 +7,21 @@ import com.getbase.android.db.fluentsqlite.Update;
 import com.getbase.autoindexer.DbTableModel;
 import com.getbase.forger.thneed.MicroOrmModel;
 
+import org.chalup.thneed.ModelGraph;
+
 import android.content.ContentValues;
 import android.net.Uri;
 
 public class AutoProvider<TModel extends DbTableModel & MicroOrmModel> {
   private final AutoUris<TModel> mAutoUris;
   private final ContentTypeVisitor mContentTypeVisitor;
+  private final QueryBuilderVisitor mQueryBuilderVisitor;
 
-  public AutoProvider(AutoUris<TModel> autoUris) {
+  public AutoProvider(AutoUris<TModel> autoUris, ModelGraph<TModel> modelGraph) {
     mAutoUris = autoUris;
 
     mContentTypeVisitor = new ContentTypeVisitor(mAutoUris.getAuthority());
+    mQueryBuilderVisitor = new QueryBuilderVisitor(modelGraph);
   }
 
   private AutoUri getAutoUri(Uri uri) {
@@ -29,7 +33,10 @@ public class AutoProvider<TModel extends DbTableModel & MicroOrmModel> {
   }
 
   public Query query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
-    return null;
+    return getAutoUri(uri).accept(mQueryBuilderVisitor)
+        .columns(projection)
+        .where(selection, selectionArgs)
+        .orderBy(sortOrder);
   }
 
   public Insert insert(Uri uri, ContentValues values) {
