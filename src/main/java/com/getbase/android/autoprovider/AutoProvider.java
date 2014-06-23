@@ -20,8 +20,12 @@ public class AutoProvider<TModel extends DbTableModel & MicroOrmModel> {
     mContentTypeVisitor = new ContentTypeVisitor(mAutoUris.getAuthority());
   }
 
+  private AutoUri getAutoUri(Uri uri) {
+    return mAutoUris.getAutoUri(uri).get();
+  }
+
   public String getType(Uri uri) {
-    return mAutoUris.getAutoUri(uri).get().accept(mContentTypeVisitor);
+    return getAutoUri(uri).accept(mContentTypeVisitor);
   }
 
   public Query query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
