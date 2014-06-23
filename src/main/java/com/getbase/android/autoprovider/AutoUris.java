@@ -10,7 +10,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.HashMultimap;
-import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -18,7 +17,6 @@ import com.google.common.collect.Multimap;
 
 import org.chalup.thneed.ManyToManyRelationship;
 import org.chalup.thneed.ModelGraph;
-import org.chalup.thneed.ModelVisitor;
 import org.chalup.thneed.OneToManyRelationship;
 import org.chalup.thneed.OneToOneRelationship;
 import org.chalup.thneed.PolymorphicRelationship;
@@ -50,14 +48,7 @@ public class AutoUris<TModel extends DbTableModel & MicroOrmModel> implements Mo
     mAuthority = authority;
     mIdColumnName = idColumnName;
 
-    final ImmutableBiMap.Builder<Class<?>, String> classToTableMappingBuilder = ImmutableBiMap.builder();
-    mModelGraph.accept(new ModelVisitor<TModel>() {
-      @Override
-      public void visit(TModel model) {
-        classToTableMappingBuilder.put(model.getModelClass(), model.getDbTable());
-      }
-    });
-    mClassToTableMap = classToTableMappingBuilder.build();
+    mClassToTableMap = Utils.buildClassToTableMap(mModelGraph);
 
     final HashMultimap<Class<?>, Class<?>> relationsByClass = HashMultimap.create();
     final Map<Class<?>, Class<?>> unsupportedRelations = Maps.newHashMap();
