@@ -50,4 +50,10 @@ public class AutoProvider<TModel extends DbTableModel & MicroOrmModel> {
   public Update update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
     return null;
   }
+
+  //    E   M
+  // R  S   S
+  // C  -   CV
+  // U  S   S
+  // D  S   S
 }
