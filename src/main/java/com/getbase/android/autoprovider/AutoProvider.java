@@ -2,7 +2,7 @@ package com.getbase.android.autoprovider;
 
 import com.getbase.android.db.fluentsqlite.Delete;
 import com.getbase.android.db.fluentsqlite.Insert;
-import com.getbase.android.db.fluentsqlite.QueryBuilder.Query;
+import com.getbase.android.db.fluentsqlite.Query;
 import com.getbase.android.db.fluentsqlite.Update;
 import com.getbase.autoindexer.DbTableModel;
 import com.getbase.forger.thneed.MicroOrmModel;
@@ -36,7 +36,8 @@ public class AutoProvider<TModel extends DbTableModel & MicroOrmModel> {
     return getAutoUri(uri).accept(mQueryBuilderVisitor)
         .columns(projection)
         .where(selection, selectionArgs)
-        .orderBy(sortOrder);
+        .orderBy(sortOrder)
+        .build();
   }
 
   public Insert insert(Uri uri, ContentValues values) {

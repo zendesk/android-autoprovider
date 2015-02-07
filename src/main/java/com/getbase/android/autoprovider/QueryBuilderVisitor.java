@@ -1,9 +1,9 @@
 package com.getbase.android.autoprovider;
 
 import static com.getbase.android.db.fluentsqlite.Expressions.column;
-import static com.getbase.android.db.fluentsqlite.QueryBuilder.select;
+import static com.getbase.android.db.fluentsqlite.Query.select;
 
-import com.getbase.android.db.fluentsqlite.QueryBuilder.Query;
+import com.getbase.android.db.fluentsqlite.Query.QueryBuilder;
 import com.getbase.autoindexer.DbTableModel;
 import com.getbase.forger.thneed.MicroOrmModel;
 import com.google.common.collect.BiMap;
@@ -21,12 +21,12 @@ import org.chalup.thneed.RelationshipVisitor;
 
 import java.util.Map.Entry;
 
-public class QueryBuilderVisitor implements AutoUriVisitor<Query> {
+public class QueryBuilderVisitor implements AutoUriVisitor<QueryBuilder> {
   private final BiMap<Class<?>, String> mClassToTableMap;
   private final Table<Class<?>, Class<?>, QueryProcessor> mQueryProcessors;
 
   private interface QueryProcessor {
-    Query process(Query query, EntityUri relatedEntity);
+    QueryBuilder process(QueryBuilder query, EntityUri relatedEntity);
   }
 
   public <TModel extends DbTableModel & MicroOrmModel> QueryBuilderVisitor(ModelGraph<TModel> modelGraph) {
@@ -41,11 +41,11 @@ public class QueryBuilderVisitor implements AutoUriVisitor<Query> {
             relationship.mReferencedModel.getModelClass(),
             new QueryProcessor() {
               @Override
-              public Query process(Query query, EntityUri relatedEntity) {
+              public QueryBuilder process(QueryBuilder queryBuilder, EntityUri relatedEntity) {
                 if (relatedEntity.getIdColumn().equals(relationship.mReferencedModelIdColumn)) {
-                  return query.where(column(relationship.mLinkedByColumn).eq().literal(relatedEntity.getId()));
+                  return queryBuilder.where(column(relationship.mLinkedByColumn).eq().literal(relatedEntity.getId()));
                 } else {
-                  return query.where(column(relationship.mLinkedByColumn).in(
+                  return queryBuilder.where(column(relationship.mLinkedByColumn).in(
                       relatedEntity
                           .accept(QueryBuilderVisitor.this)
                           .column(relationship.mReferencedModelIdColumn)
@@ -63,11 +63,11 @@ public class QueryBuilderVisitor implements AutoUriVisitor<Query> {
             relationship.mModel.getModelClass(),
             new QueryProcessor() {
               @Override
-              public Query process(Query query, EntityUri relatedEntity) {
+              public QueryBuilder process(QueryBuilder queryBuilder, EntityUri relatedEntity) {
                 if (relatedEntity.getIdColumn().equals(relationship.mParentModelIdColumn)) {
-                  return query.where(column(relationship.mLinkedByColumn).eq().literal(relatedEntity.getId()));
+                  return queryBuilder.where(column(relationship.mLinkedByColumn).eq().literal(relatedEntity.getId()));
                 } else {
-                  return query.where(column(relationship.mLinkedByColumn).in(
+                  return queryBuilder.where(column(relationship.mLinkedByColumn).in(
                       relatedEntity
                           .accept(QueryBuilderVisitor.this)
                           .column(relationship.mParentModelIdColumn)
@@ -85,11 +85,11 @@ public class QueryBuilderVisitor implements AutoUriVisitor<Query> {
             relationship.mModel.getModelClass(),
             new QueryProcessor() {
               @Override
-              public Query process(Query query, EntityUri relatedEntity) {
+              public QueryBuilder process(QueryBuilder queryBuilder, EntityUri relatedEntity) {
                 if (relatedEntity.getIdColumn().equals(relationship.mModelIdColumn)) {
-                  return query.where(column(relationship.mGroupByColumn).eq().literal(relatedEntity.getId()));
+                  return queryBuilder.where(column(relationship.mGroupByColumn).eq().literal(relatedEntity.getId()));
                 } else {
-                  return query.where(column(relationship.mGroupByColumn).in(
+                  return queryBuilder.where(column(relationship.mGroupByColumn).in(
                       relatedEntity
                           .accept(QueryBuilderVisitor.this)
                           .column(relationship.mModelIdColumn)
@@ -113,13 +113,13 @@ public class QueryBuilderVisitor implements AutoUriVisitor<Query> {
               polyModel.getValue().getModelClass(),
               new QueryProcessor() {
                 @Override
-                public Query process(Query query, EntityUri relatedEntity) {
-                  query = query.where(column(relationship.mPolymorphicModelIdColumn).eq().literal(polyModel.getKey()));
+                public QueryBuilder process(QueryBuilder queryBuilder, EntityUri relatedEntity) {
+                  queryBuilder = queryBuilder.where(column(relationship.mPolymorphicModelIdColumn).eq().literal(polyModel.getKey()));
 
                   if (relatedEntity.getIdColumn().equals(relationship.mPolymorphicModelIdColumn)) {
-                    return query.where(column(relationship.mIdColumnName).eq().literal(relatedEntity.getId()));
+                    return queryBuilder.where(column(relationship.mIdColumnName).eq().literal(relatedEntity.getId()));
                   } else {
-                    return query.where(column(relationship.mIdColumnName).in(
+                    return queryBuilder.where(column(relationship.mIdColumnName).in(
                         relatedEntity
                             .accept(QueryBuilderVisitor.this)
                             .column(relationship.mPolymorphicModelIdColumn)
@@ -135,20 +135,20 @@ public class QueryBuilderVisitor implements AutoUriVisitor<Query> {
   }
 
   @Override
-  public Query visit(EntityUri uri) {
+  public QueryBuilder visit(EntityUri uri) {
     return select()
         .from(mClassToTableMap.get(uri.getModel()))
         .where(column(uri.getIdColumn()).eq().literal(uri.getId()));
   }
 
   @Override
-  public Query visit(ModelUri uri) {
-    Query query = select().from(mClassToTableMap.get(uri.getModel()));
+  public QueryBuilder visit(ModelUri uri) {
+    QueryBuilder queryBuilder = select().from(mClassToTableMap.get(uri.getModel()));
 
     for (EntityUri entityUri : uri.getRelatedEntities()) {
-      query = mQueryProcessors.get(uri.getModel(), entityUri.getModel()).process(query, entityUri);
+      queryBuilder = mQueryProcessors.get(uri.getModel(), entityUri.getModel()).process(queryBuilder, entityUri);
     }
 
-    return query;
+    return queryBuilder;
   }
 }
