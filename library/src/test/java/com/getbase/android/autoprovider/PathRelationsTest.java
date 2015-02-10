@@ -1,7 +1,7 @@
 package com.getbase.android.autoprovider;
 
 import static com.getbase.android.autoprovider.TestModels.MODEL_GRAPH;
-import static org.fest.assertions.Assertions.assertThat;
+import static org.fest.assertions.api.Assertions.assertThat;
 
 import com.getbase.android.autoprovider.TestModels.Contact;
 import com.getbase.android.autoprovider.TestModels.Deal;
@@ -27,11 +27,11 @@ public class PathRelationsTest {
   public void addingModelShouldCreateRelationToEntityUri() throws Exception {
     ModelUri dealsForContact = mAutoUris.model(Contact.class).id(1500).model(Deal.class);
 
-    assertThat(dealsForContact.getModel()).isEqualTo(Deal.class);
+    assertThat(dealsForContact.getModel()).isEqualTo((Class) Deal.class);
 
     Optional<EntityUri> relatedContact = dealsForContact.getRelatedEntity(Contact.class);
     assertThat(relatedContact.isPresent()).isTrue();
-    assertThat(relatedContact.get().getModel()).isEqualTo(Contact.class);
+    assertThat(relatedContact.get().getModel()).isEqualTo((Class) Contact.class);
     assertThat(relatedContact.get().getId()).isEqualTo(1500);
   }
 
@@ -39,11 +39,11 @@ public class PathRelationsTest {
   public void addingIdShouldPreserveRelationToEntityUri() throws Exception {
     EntityUri dealUri = mAutoUris.model(Contact.class).id(1500).model(Deal.class).id(2900);
 
-    assertThat(dealUri.getModelUri().getModel()).isEqualTo(Deal.class);
+    assertThat(dealUri.getModelUri().getModel()).isEqualTo((Class) Deal.class);
 
     Optional<EntityUri> relatedContact = dealUri.getRelatedEntity(Contact.class);
     assertThat(relatedContact.isPresent()).isTrue();
-    assertThat(relatedContact.get().getModel()).isEqualTo(Contact.class);
+    assertThat(relatedContact.get().getModel()).isEqualTo((Class) Contact.class);
     assertThat(relatedContact.get().getId()).isEqualTo(1500);
   }
 

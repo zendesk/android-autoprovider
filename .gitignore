@@ -1,25 +1,11 @@
-*.keystore
-local.properties
+.gradle
+/local.properties
+/.idea/workspace.xml
+/.idea/libraries
+.DS_Store
+/build
 
-bin
 gen
 
-#Eclipse
-.classpath
-.project
-
-#IntelliJ IDEA
 .idea
 *.iml
-*.ipr
-*.iws
-classes
-gen-external-apklibs
-
-out
-
-#emacs
-*~
-
-#maven
-target

@@ -1,7 +1,7 @@
 package com.getbase.android.autoprovider;
 
 import static com.getbase.android.autoprovider.TestModels.MODEL_GRAPH;
-import static org.fest.assertions.Assertions.assertThat;
+import static org.fest.assertions.api.Assertions.assertThat;
 
 import com.getbase.android.autoprovider.TestModels.Contact;
 import com.getbase.android.autoprovider.TestModels.Deal;

@@ -1,7 +1,7 @@
 package com.getbase.android.autoprovider;
 
 import static com.getbase.android.autoprovider.TestModels.MODEL_GRAPH;
-import static org.fest.assertions.Assertions.assertThat;
+import static org.fest.assertions.api.Assertions.assertThat;
 
 import com.getbase.android.autoprovider.TestModels.Contact;
 import com.getbase.android.autoprovider.TestModels.TestModel;
@@ -31,7 +31,7 @@ public class UriBuildingTest {
   public void shouldBuildSimpleModelUri() throws Exception {
     ModelUri modelUri = mAutoUris.model(Contact.class);
 
-    assertThat(modelUri.getModel()).isEqualTo(Contact.class);
+    assertThat(modelUri.getModel()).isEqualTo((Class) Contact.class);
   }
 
   @Test
@@ -40,7 +40,7 @@ public class UriBuildingTest {
 
     assertThat(entityUri.getId()).isEqualTo(1500);
     assertThat(entityUri.getIdColumn()).isEqualTo(BaseColumns._ID);
-    assertThat(entityUri.getModel()).isEqualTo(Contact.class);
+    assertThat(entityUri.getModel()).isEqualTo((Class) Contact.class);
   }
 
   @Test
@@ -49,6 +49,6 @@ public class UriBuildingTest {
 
     assertThat(entityUri.getId()).isEqualTo(1500);
     assertThat(entityUri.getIdColumn()).isEqualTo("id");
-    assertThat(entityUri.getModel()).isEqualTo(Contact.class);
+    assertThat(entityUri.getModel()).isEqualTo((Class) Contact.class);
   }
 }

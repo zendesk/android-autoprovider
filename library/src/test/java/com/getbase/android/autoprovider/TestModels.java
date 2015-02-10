@@ -5,14 +5,12 @@ import com.getbase.forger.thneed.MicroOrmModel;
 import com.google.common.collect.ImmutableList;
 
 import org.chalup.microorm.annotations.Column;
-import org.chalup.microorm.annotations.Embedded;
 import org.chalup.thneed.ModelGraph;
 import org.chalup.thneed.PolymorphicType;
 
 import android.provider.BaseColumns;
 
 import java.util.Locale;
-import java.util.UUID;
 
 public final class TestModels {
   private TestModels() {
