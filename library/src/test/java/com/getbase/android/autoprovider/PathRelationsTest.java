@@ -3,6 +3,10 @@ package com.getbase.android.autoprovider;
 import static com.getbase.android.autoprovider.TestModels.MODEL_GRAPH;
 import static org.fest.assertions.api.Assertions.assertThat;
 
+import com.getbase.android.autoprovider.AutoUris;
+import com.getbase.android.autoprovider.EntityRelation;
+import com.getbase.android.autoprovider.EntityUri;
+import com.getbase.android.autoprovider.ModelUri;
 import com.getbase.android.autoprovider.TestModels.Contact;
 import com.getbase.android.autoprovider.TestModels.Deal;
 import com.getbase.android.autoprovider.TestModels.TestModel;
@@ -29,10 +33,11 @@ public class PathRelationsTest {
 
     assertThat(dealsForContact.getModel()).isEqualTo((Class) Deal.class);
 
-    Optional<EntityUri> relatedContact = dealsForContact.getRelatedEntity(Contact.class);
+    Optional<EntityRelation> relatedContact = dealsForContact.getRelatedEntity(Contact.class);
+    assertThat(relatedContact.get().relationColumn.isPresent()).isFalse();
     assertThat(relatedContact.isPresent()).isTrue();
-    assertThat(relatedContact.get().getModel()).isEqualTo((Class) Contact.class);
-    assertThat(relatedContact.get().getId()).isEqualTo(1500);
+    assertThat(relatedContact.get().entityUri.getModel()).isEqualTo((Class) Contact.class);
+    assertThat(relatedContact.get().entityUri.getId()).isEqualTo(1500);
   }
 
   @Test
@@ -41,10 +46,11 @@ public class PathRelationsTest {
 
     assertThat(dealUri.getModelUri().getModel()).isEqualTo((Class) Deal.class);
 
-    Optional<EntityUri> relatedContact = dealUri.getRelatedEntity(Contact.class);
+    Optional<EntityRelation> relatedContact = dealUri.getRelatedEntity(Contact.class);
     assertThat(relatedContact.isPresent()).isTrue();
-    assertThat(relatedContact.get().getModel()).isEqualTo((Class) Contact.class);
-    assertThat(relatedContact.get().getId()).isEqualTo(1500);
+    assertThat(relatedContact.get().relationColumn.isPresent()).isFalse();
+    assertThat(relatedContact.get().entityUri.getModel()).isEqualTo((Class) Contact.class);
+    assertThat(relatedContact.get().entityUri.getId()).isEqualTo(1500);
   }
 
   @Test

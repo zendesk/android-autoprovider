@@ -1,29 +1,24 @@
 package com.getbase.android.autoprovider;
 
-import android.content.ContentResolver;
-
 public class ContentTypeVisitor implements AutoUriVisitor<String> {
-  private final String mContentItemTypeBase;
-  private final String mContentDirTypeBase;
+  private final ContentTypeProvider mContentTypeProvider;
 
-  public ContentTypeVisitor(String authority) {
-    final String subtypeBase = "vnd." + authority + ".";
-
-    mContentItemTypeBase = ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + subtypeBase;
-    mContentDirTypeBase = ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + subtypeBase;
+  public ContentTypeVisitor(ContentTypeProvider contentTypeProvider) {
+    mContentTypeProvider = contentTypeProvider;
   }
 
   @Override
   public String visit(EntityUri uri) {
-    return mContentItemTypeBase + getModel(uri);
+    return mContentTypeProvider.getEntityContentType(uri.getModel());
   }
 
   @Override
   public String visit(ModelUri uri) {
-    return mContentDirTypeBase + getModel(uri);
+    return mContentTypeProvider.getModelContentType(uri.getModel());
   }
 
-  private String getModel(AutoUri uri) {
-    return uri.getModel().getSimpleName();
+  @Override
+  public String visit(CustomUri uri) {
+    throw new UnsupportedOperationException(uri.toString());
   }
 }

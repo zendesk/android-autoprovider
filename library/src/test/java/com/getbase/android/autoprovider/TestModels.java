@@ -8,8 +8,6 @@ import org.chalup.microorm.annotations.Column;
 import org.chalup.thneed.ModelGraph;
 import org.chalup.thneed.PolymorphicType;
 
-import android.provider.BaseColumns;
-
 import java.util.Locale;
 
 public final class TestModels {
@@ -17,88 +15,118 @@ public final class TestModels {
   }
 
   public static final String AUTHORITY = "com.getbase.android.autoprovider.testprovider";
+  public static final String CONTENT_TYPE_PREFIX = "autoprovider";
 
   public static class BaseModel {
-    @Column(value = BaseColumns._ID, readonly = true)
-    public long _id;
+    public static final String _ID = "_id";
+    public static final String ID = "id";
 
-    @Column("id")
+    @Column(value = _ID, readonly = true)
+    public long _id;
+    @Column(ID)
     public long id;
   }
 
   public static class Deal extends BaseModel {
-    @Column("contact_id")
+    public static final String CONTACT_ID = "contact_id";
+    public static final String USER_ID = "user_id";
+    public static final String NAME = "name";
+
+    @Column(CONTACT_ID)
     public long contactId;
-    @Column("user_id")
+    @Column(USER_ID)
     public long userId;
-    @Column("name")
+    @Column(NAME)
     public String name;
   }
 
   public static class User extends BaseModel {
-    @Column("email")
-    public String email;
+    public static final String EMAIL = "email";
+    public static final String IS_ADMIN = "is_admin";
 
-    @Column("is_admin")
+    @Column(EMAIL)
+    public String email;
+    @Column(IS_ADMIN)
     public boolean admin;
   }
 
   public static class Contact extends BaseModel {
-    @Column("contact_id")
-    public Long contactId;
+    public static final String USER_ID = "user_id";
+    public static final String CONTACT_ID = "contact_id";
 
-    @Column("user_id")
+    @Column(USER_ID)
     public long userId;
+    @Column(CONTACT_ID)
+    public long contactId;
   }
 
   public static class Lead extends BaseModel {
+    public static final String USER_ID = "user_id";
+    public static final String OWNER_ID = "owner_id";
+
+    @Column(USER_ID)
+    public long userId;
+    @Column(OWNER_ID)
+    public long ownerId;
   }
 
   public static class ContactData extends BaseModel {
-    @Column("lead_id")
+    public static final String LEAD_ID = "lead_id";
+
+    @Column(LEAD_ID)
     public long leadId;
   }
 
   public static class DealContact extends BaseModel {
-    @Column("contact_id")
-    public long contactId;
+    public static final String CONTACT_ID = "contact_id";
+    public static final String DEAL_ID = "deal_id";
 
-    @Column("deal_id")
+    @Column(CONTACT_ID)
+    public long contactId;
+    @Column(DEAL_ID)
     public long dealId;
   }
 
   public static class Note extends BaseModel {
-    @Column("notable_type")
-    public String notableType;
+    public static final String NOTABLE_TYPE = "notable_type";
+    public static final String NOTABLE_ID = "notable_id";
 
-    @Column("notable_id")
+    @Column(NOTABLE_TYPE)
+    public String notableType;
+    @Column(NOTABLE_ID)
     public long notableId;
   }
 
   public static class Call extends BaseModel {
-    @Column("callable_type")
-    public String callableType;
+    public static final String CALLABLE_TYPE = "callable_type";
+    public static final String CALLABLE_ID = "callable_id";
 
-    @Column("callable_id")
+    @Column(CALLABLE_TYPE)
+    public String callableType;
+    @Column(CALLABLE_ID)
     public long callableId;
   }
 
   public static class Tag extends BaseModel {
-    @Column("value")
+    public static final String VALUE = "value";
+
+    @Column(VALUE)
     public String value;
   }
 
   public static class Tagging extends BaseModel {
-    @Column("taggable_type")
+    public static final String TAGGABLE_TYPE = "taggable_type";
+    public static final String TAGGABLE_ID = "taggable_id";
+    public static final String TAG_ID = "tag_id";
+    public static final String USER_ID = "user_id";
+
+    @Column(TAGGABLE_TYPE)
     public String taggableType;
-
-    @Column("taggable_id")
+    @Column(TAGGABLE_ID)
     public long taggableId;
-
-    @Column("tag_id")
+    @Column(TAG_ID)
     public long tagId;
-
-    @Column("user_id")
+    @Column(USER_ID)
     public long userId;
   }
 
@@ -154,17 +182,19 @@ public final class TestModels {
   public static TestModel TAGGING = new BaseTestModel(Tagging.class);
 
   static ModelGraph<TestModel> MODEL_GRAPH = ModelGraph.of(TestModel.class)
-      .identifiedByDefault().by("id")
+      .identifiedByDefault().by(BaseModel.ID)
       .where()
-      .the(DEAL).references(CONTACT).by("contact_id")
-      .the(LEAD).mayHave(CONTACT_DATA).linked().by("lead_id")
-      .the(DEAL_CONTACT).links(DEAL).by("deal_id").with(CONTACT).by("contact_id")
-      .the(NOTE).references(ImmutableList.of(CONTACT, DEAL, LEAD)).by("notable_type", "notable_id")
-      .the(CALL).references(ImmutableList.of(CONTACT, LEAD)).by("callable_type", "callable_id")
-      .the(CONTACT).groupsOther().by("contact_id")
-      .the(TAGGING).links(TAG).by("tag_id").with(ImmutableList.of(CONTACT, LEAD, DEAL)).by("taggable_type", "taggable_id")
-      .the(TAGGING).references(USER).by("user_id")
-      .the(DEAL).references(USER).by("user_id")
-      .the(CONTACT).references(USER).by("user_id")
+      .the(DEAL).references(CONTACT).by(Deal.CONTACT_ID)
+      .the(LEAD).mayHave(CONTACT_DATA).linked().by(ContactData.LEAD_ID)
+      .the(LEAD).references(USER).by(Lead.USER_ID)
+      .the(LEAD).references(USER).by(Lead.OWNER_ID)
+      .the(DEAL_CONTACT).links(DEAL).by(DealContact.DEAL_ID).with(CONTACT).by(DealContact.CONTACT_ID)
+      .the(NOTE).references(ImmutableList.of(CONTACT, DEAL, LEAD)).by(Note.NOTABLE_TYPE, Note.NOTABLE_ID)
+      .the(CALL).references(ImmutableList.of(CONTACT, LEAD)).by(Call.CALLABLE_TYPE, Call.CALLABLE_ID)
+      .the(CONTACT).groupsOther().by(Contact.CONTACT_ID)
+      .the(TAGGING).links(TAG).by(Tagging.TAG_ID).with(ImmutableList.of(CONTACT, LEAD, DEAL)).by(Tagging.TAGGABLE_TYPE, Tagging.TAGGABLE_ID)
+      .the(TAGGING).references(USER).by(Tagging.USER_ID)
+      .the(DEAL).references(USER).by(Deal.USER_ID)
+      .the(CONTACT).references(USER).by(Contact.USER_ID)
       .build();
 }

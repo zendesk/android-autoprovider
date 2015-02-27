@@ -6,16 +6,16 @@ import android.net.Uri;
 
 import java.util.Collection;
 
-public interface AutoUri {
+public interface AutoUri extends CustomUriBuilder {
   Uri toUri();
 
   ModelUri getModelUri();
 
   Class<?> getModel();
 
-  Collection<EntityUri> getRelatedEntities();
+  Collection<EntityRelation> getRelatedEntities();
 
-  Optional<EntityUri> getRelatedEntity(Class<?> model);
+  Optional<EntityRelation> getRelatedEntity(Class<?> model);
 
   <T> T accept(AutoUriVisitor<T> visitor);
 }

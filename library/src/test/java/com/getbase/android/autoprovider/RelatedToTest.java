@@ -3,6 +3,10 @@ package com.getbase.android.autoprovider;
 import static com.getbase.android.autoprovider.TestModels.MODEL_GRAPH;
 import static org.fest.assertions.api.Assertions.assertThat;
 
+import com.getbase.android.autoprovider.AutoUris;
+import com.getbase.android.autoprovider.EntityRelation;
+import com.getbase.android.autoprovider.EntityUri;
+import com.getbase.android.autoprovider.ModelUri;
 import com.getbase.android.autoprovider.TestModels.Contact;
 import com.getbase.android.autoprovider.TestModels.Deal;
 import com.getbase.android.autoprovider.TestModels.Lead;
@@ -39,9 +43,9 @@ public class RelatedToTest {
         .relatedTo(mAutoUris.model(Contact.class).id(1500))
         .relatedTo(mAutoUris.model(User.class).id(2900));
 
-    Collection<EntityUri> relatedEntities = uri.getRelatedEntities();
-    assertThat(relatedEntities).contains(mAutoUris.model(Contact.class).id(1500));
-    assertThat(relatedEntities).contains(mAutoUris.model(User.class).id(2900));
+    Collection<EntityRelation> relatedEntities = uri.getRelatedEntities();
+    assertThat(relatedEntities).contains(new EntityRelation(mAutoUris.model(Contact.class).id(1500)));
+    assertThat(relatedEntities).contains(new EntityRelation(mAutoUris.model(User.class).id(2900)));
   }
 
   @Test
@@ -89,9 +93,9 @@ public class RelatedToTest {
         .relatedTo(mAutoUris.model(Contact.class).id(1500))
         .relatedTo(mAutoUris.model(User.class).id(2900));
 
-    Collection<EntityUri> relatedEntities = uri.getRelatedEntities();
-    assertThat(relatedEntities).contains(mAutoUris.model(Contact.class).id(1500));
-    assertThat(relatedEntities).contains(mAutoUris.model(User.class).id(2900));
+    Collection<EntityRelation> relatedEntities = uri.getRelatedEntities();
+    assertThat(relatedEntities).contains(new EntityRelation(mAutoUris.model(Contact.class).id(1500)));
+    assertThat(relatedEntities).contains(new EntityRelation(mAutoUris.model(User.class).id(2900)));
   }
 
   @Test
@@ -122,6 +126,22 @@ public class RelatedToTest {
   public void shouldRejectInvalidRelationOnEntityUri() throws Exception {
     mAutoUris
         .model(Deal.class).id(42)
+        .relatedTo(mAutoUris.model(Lead.class).id(1500));
+  }
+
+  @Test
+  public void shouldAcceptAnyRelationOnCustomUri() throws Exception {
+    mAutoUris
+        .path("custom")
+        .relatedTo(mAutoUris.model(Lead.class).id(1500))
+        .relatedTo("wat", mAutoUris.model(Contact.class).id(1500));
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void shouldRejectDuplicateRelationOnCustomUri() throws Exception {
+    mAutoUris
+        .path("custom")
+        .relatedTo(mAutoUris.model(Lead.class).id(1500))
         .relatedTo(mAutoUris.model(Lead.class).id(1500));
   }
 }

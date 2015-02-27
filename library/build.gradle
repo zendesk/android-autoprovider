@@ -41,6 +41,7 @@ dependencies {
   testCompile 'org.robolectric:robolectric:2.4'
   testCompile 'org.mockito:mockito-all:1.9.5'
   testCompile 'com.google.android:android:4.1.1.4'
+  testCompile 'com.getbase.android.schema:library:0.6'
 
   compile 'com.google.guava:guava:16.0'
   compile 'com.android.support:support-annotations:19.1.0'
@@ -49,6 +50,8 @@ dependencies {
   compile 'com.getbase.android.db:library:0.10.1'
   compile 'org.chalup.microorm:microorm:0.5'
   compile 'com.getbase.forger:forger:0.1-SNAPSHOT'
+  compile 'com.android.support:support-v4:21.0.0'
+  compile 'com.getbase.sqlitemaster:sqlitemaster:0.1.1-SNAPSHOT'
 }
 
 apply from: './gradle-mvn-push.gradle'

@@ -1,5 +1,13 @@
 package com.getbase.android.autoprovider;
 
+import static org.fest.assertions.api.Assertions.assertThat;
+
+import com.getbase.android.autoprovider.AutoUris;
+import com.getbase.android.autoprovider.ModelUri;
+import com.getbase.android.autoprovider.TestModels.Lead;
+import com.getbase.android.autoprovider.TestModels.TestModel;
+import com.getbase.android.autoprovider.TestModels.User;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
@@ -11,7 +19,7 @@ import android.net.Uri;
 @Config(manifest = Config.NONE)
 public class ModelUriParsingTest {
 
-  private static final AutoUris AUTO_URIS = AutoUris
+  private static final AutoUris<TestModel> AUTO_URIS = AutoUris
       .from(TestModels.MODEL_GRAPH)
       .forContentProvider(TestModels.AUTHORITY)
       .build();
@@ -29,5 +37,15 @@ public class ModelUriParsingTest {
   @Test(expected = IllegalArgumentException.class)
   public void shouldRejectUrisForOtherAuthorities() throws Exception {
     AUTO_URIS.getModelUri(Uri.parse("content://com.android.contacts/data/emails/filter/acme?directory=3"));
+  }
+
+  @Test
+  public void modelUrisShouldHandleAmbiguousColumns() {
+    Uri uri = AUTO_URIS.model(Lead.class)
+        .relatedTo(Lead.OWNER_ID, AUTO_URIS.model(User.class).id(1))
+        .relatedTo(Lead.USER_ID, AUTO_URIS.model(User.class).id(2)).toUri();
+    assertThat(uri).isNotNull();
+    ModelUri modelUri = AUTO_URIS.getModelUri(uri);
+    assertThat(modelUri).isNotNull();
   }
 }
