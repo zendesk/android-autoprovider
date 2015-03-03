@@ -1,12 +1,13 @@
 package com.getbase.android.autoprovider;
 
 import com.getbase.android.db.fluentsqlite.Query.QueryBuilder;
-import com.getbase.autoindexer.DbTableModel;
-import com.getbase.forger.thneed.MicroOrmModel;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableSet;
+
+import org.chalup.thneed.models.DatabaseModel;
+import org.chalup.thneed.models.PojoModel;
 
 import android.content.ContentResolver;
 import android.database.Cursor;
@@ -15,7 +16,7 @@ import android.net.Uri;
 
 import java.util.Set;
 
-public class AutoNotificationUriSetter<TModel extends DbTableModel & MicroOrmModel> {
+public class AutoNotificationUriSetter<TModel extends DatabaseModel & PojoModel> {
 
   private final SqliteViewDependenciesResolver mViewDependenciesResolver;
   private final SqliteQueryTablesFinder mTablesFinder;

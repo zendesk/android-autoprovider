@@ -1,7 +1,7 @@
 package com.getbase.android.autoprovider;
 
-import com.getbase.autoindexer.DbTableModel;
-import com.getbase.forger.thneed.MicroOrmModel;
+import org.chalup.thneed.models.DatabaseModel;
+import org.chalup.thneed.models.PojoModel;
 import com.google.common.collect.ImmutableList;
 
 import org.chalup.microorm.annotations.Column;
@@ -130,7 +130,7 @@ public final class TestModels {
     public long userId;
   }
 
-  public interface TestModel extends DbTableModel, MicroOrmModel {
+  public interface TestModel extends DatabaseModel, PojoModel {
   }
 
   public static class BaseTestModel implements TestModel {
@@ -141,7 +141,7 @@ public final class TestModels {
     }
 
     @Override
-    public String getDbTable() {
+    public String getTableName() {
       return mKlass.getSimpleName().toLowerCase(Locale.US);
     }
 

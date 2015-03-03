@@ -10,11 +10,8 @@ import com.getbase.android.db.cursors.SingleRowTransforms;
 import com.getbase.android.db.fluentsqlite.Delete;
 import com.getbase.android.db.fluentsqlite.Expressions.Expression;
 import com.getbase.android.db.fluentsqlite.Insert;
-import com.getbase.android.db.fluentsqlite.Query;
 import com.getbase.android.db.fluentsqlite.Query.QueryBuilder;
 import com.getbase.android.db.fluentsqlite.Update;
-import com.getbase.autoindexer.DbTableModel;
-import com.getbase.forger.thneed.MicroOrmModel;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.ImmutableTable;
@@ -29,6 +26,8 @@ import org.chalup.thneed.OneToOneRelationship;
 import org.chalup.thneed.PolymorphicRelationship;
 import org.chalup.thneed.RecursiveModelRelationship;
 import org.chalup.thneed.RelationshipVisitor;
+import org.chalup.thneed.models.DatabaseModel;
+import org.chalup.thneed.models.PojoModel;
 
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -229,7 +228,7 @@ public class CrudOperationsResolver {
     }
   };
 
-  public <TModel extends DbTableModel & MicroOrmModel> CrudOperationsResolver(SQLiteOpenHelper database, ModelGraph<TModel> modelGraph) {
+  public <TModel extends DatabaseModel & PojoModel> CrudOperationsResolver(SQLiteOpenHelper database, ModelGraph<TModel> modelGraph) {
     mDatabase = database;
     mClassToTableMap = Utils.buildClassToTableMap(modelGraph);
     final Table<Class<?>, Class<?>, Map<String, CrudDataProcessor>> crudDataProcessors = HashBasedTable.create();

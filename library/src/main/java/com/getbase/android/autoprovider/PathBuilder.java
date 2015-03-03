@@ -1,14 +1,15 @@
 package com.getbase.android.autoprovider;
 
-import com.getbase.autoindexer.DbTableModel;
-import com.getbase.forger.thneed.MicroOrmModel;
 import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
+
+import org.chalup.thneed.models.DatabaseModel;
+import org.chalup.thneed.models.PojoModel;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class PathBuilder<T extends DbTableModel & MicroOrmModel> {
+public class PathBuilder<T extends DatabaseModel & PojoModel> {
 
   public static final String NUMBER = "#";
   public static final String WILDCARD = "*";

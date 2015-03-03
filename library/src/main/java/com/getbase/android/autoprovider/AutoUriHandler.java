@@ -3,10 +3,10 @@ package com.getbase.android.autoprovider;
 import com.getbase.android.db.fluentsqlite.Delete;
 import com.getbase.android.db.fluentsqlite.Query.QueryBuilder;
 import com.getbase.android.db.fluentsqlite.Update;
-import com.getbase.autoindexer.DbTableModel;
-import com.getbase.forger.thneed.MicroOrmModel;
 
 import org.chalup.thneed.ModelGraph;
+import org.chalup.thneed.models.DatabaseModel;
+import org.chalup.thneed.models.PojoModel;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -17,7 +17,7 @@ import android.text.TextUtils;
 
 import java.util.EnumSet;
 
-public class AutoUriHandler<TModel extends DbTableModel & MicroOrmModel> extends BaseContentUriHandler {
+public class AutoUriHandler<TModel extends DatabaseModel & PojoModel> extends BaseContentUriHandler {
   private final AutoUris<TModel> mAutoUris;
   private final ContentTypeVisitor mContentTypeVisitor;
   private final CrudOperationsResolver mCrudOperationsResolver;

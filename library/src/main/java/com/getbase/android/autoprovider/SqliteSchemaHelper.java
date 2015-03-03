@@ -1,8 +1,8 @@
 package com.getbase.android.autoprovider;
 
-import com.getbase.sqlitemaster.SQLiteMaster;
-import com.getbase.sqlitemaster.SQLiteSchemaPart;
-import com.getbase.sqlitemaster.SQLiteSchemaPartType;
+import com.getbase.android.sqlitemaster.SQLiteMaster;
+import com.getbase.android.sqlitemaster.SQLiteSchemaPart;
+import com.getbase.android.sqlitemaster.SQLiteSchemaPartType;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableMap;
