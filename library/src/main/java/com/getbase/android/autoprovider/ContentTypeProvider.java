@@ -1,11 +1,11 @@
 package com.getbase.android.autoprovider;
 
-import com.getbase.autoindexer.DbTableModel;
-import com.getbase.forger.thneed.MicroOrmModel;
+import org.chalup.thneed.models.DatabaseModel;
+import org.chalup.thneed.models.PojoModel;
 
 import android.content.ContentResolver;
 
-public class ContentTypeProvider<TModel extends DbTableModel & MicroOrmModel> {
+public class ContentTypeProvider<TModel extends DatabaseModel & PojoModel> {
   private final String mContentItemTypeBase;
   private final String mContentDirTypeBase;
 

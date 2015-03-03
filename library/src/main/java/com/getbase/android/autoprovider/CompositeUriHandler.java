@@ -6,10 +6,11 @@ import com.getbase.android.db.fluentsqlite.Delete;
 import com.getbase.android.db.fluentsqlite.Insert;
 import com.getbase.android.db.fluentsqlite.Query.QueryBuilder;
 import com.getbase.android.db.fluentsqlite.Update;
-import com.getbase.autoindexer.DbTableModel;
-import com.getbase.forger.thneed.MicroOrmModel;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
+
+import org.chalup.thneed.models.DatabaseModel;
+import org.chalup.thneed.models.PojoModel;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -22,7 +23,7 @@ import android.provider.BaseColumns;
 
 import java.util.Map;
 
-public abstract class CompositeUriHandler<T extends DbTableModel & MicroOrmModel> extends BaseContentUriHandler {
+public abstract class CompositeUriHandler<T extends DatabaseModel & PojoModel> extends BaseContentUriHandler {
 
   private final AutoNotificationUriSetter mAutoNotificationUriSetter;
 

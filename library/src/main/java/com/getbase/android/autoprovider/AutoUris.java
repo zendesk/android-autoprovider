@@ -1,12 +1,9 @@
 package com.getbase.android.autoprovider;
 
-import com.getbase.autoindexer.DbTableModel;
-import com.getbase.forger.thneed.MicroOrmModel;
 import com.google.common.base.Joiner;
 import com.google.common.base.Objects;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.ImmutableTable;
 import com.google.common.collect.Lists;
@@ -20,6 +17,8 @@ import org.chalup.thneed.OneToOneRelationship;
 import org.chalup.thneed.PolymorphicRelationship;
 import org.chalup.thneed.RecursiveModelRelationship;
 import org.chalup.thneed.RelationshipVisitor;
+import org.chalup.thneed.models.DatabaseModel;
+import org.chalup.thneed.models.PojoModel;
 
 import android.content.ContentResolver;
 import android.net.Uri;
@@ -33,21 +32,21 @@ import java.util.Set;
 
 import javax.annotation.Nonnull;
 
-public class AutoUris<TModel extends DbTableModel & MicroOrmModel> implements ModelUriBuilder, CustomUriBuilder {
+public class AutoUris<TModel extends DatabaseModel & PojoModel> implements ModelUriBuilder, CustomUriBuilder {
   private static final String RELATED_TO_QUERY_PARAM = "relatedTo";
   private static final String ID_COLUMN_QUERY_PARAM = "idColumn";
 
   private final String mAuthority;
   private final String mIdColumnName;
 
-  private final BiMap<Class<?>, String> mClassToTableMap;
+  private final ClassToTable<TModel> mClassToTableMap;
   private final Table<Class<?>, Class<?>, Set<String>> mRelationsByClasses;
 
   AutoUris(ModelGraph<TModel> modelGraph, String authority, String idColumnName) {
     mAuthority = authority;
     mIdColumnName = idColumnName;
 
-    mClassToTableMap = Utils.buildClassToTableMap(modelGraph);
+    mClassToTableMap = new ClassToTable<>(modelGraph);
 
     final Table<Class<?>, Class<?>, Set<String>> relationsByClass = HashBasedTable.create();
 
@@ -101,7 +100,7 @@ public class AutoUris<TModel extends DbTableModel & MicroOrmModel> implements Mo
     mRelationsByClasses = ImmutableTable.copyOf(relationsByClass);
   }
 
-  public static <T extends DbTableModel & MicroOrmModel> AuthoritySelector<T> from(ModelGraph<T> modelGraph) {
+  public static <T extends DatabaseModel & PojoModel> AuthoritySelector<T> from(ModelGraph<T> modelGraph) {
     return new Builder<T>(modelGraph);
   }
 
@@ -109,7 +108,7 @@ public class AutoUris<TModel extends DbTableModel & MicroOrmModel> implements Mo
     return mAuthority;
   }
 
-  public static class Builder<TModel extends DbTableModel & MicroOrmModel> implements AuthoritySelector<TModel> {
+  public static class Builder<TModel extends DatabaseModel & PojoModel> implements AuthoritySelector<TModel> {
     private final ModelGraph<TModel> mModelGraph;
     private String mIdColumnName = BaseColumns._ID;
     private String mAuthority;
@@ -134,14 +133,14 @@ public class AutoUris<TModel extends DbTableModel & MicroOrmModel> implements Mo
     }
   }
 
-  public interface AuthoritySelector<TModel extends DbTableModel & MicroOrmModel> {
+  public interface AuthoritySelector<TModel extends DatabaseModel & PojoModel> {
     Builder<TModel> forContentProvider(String authority);
   }
 
   @Override
   public ModelUri model(Class<?> klass) {
     Preconditions.checkNotNull(klass);
-    Preconditions.checkArgument(mClassToTableMap.containsKey(klass), "Model %s is not present in supplied model graph", klass.getSimpleName());
+    Preconditions.checkArgument(mClassToTableMap.hasClass(klass), "Model %s is not present in supplied model graph", klass.getSimpleName());
     return new ModelUriImpl(klass);
   }
 
@@ -200,7 +199,7 @@ public class AutoUris<TModel extends DbTableModel & MicroOrmModel> implements Mo
             && entityRelation.entityUri.getRelatedEntities().isEmpty()
             && !entityRelation.relationColumn.isPresent()) {
           builder
-              .appendPath(mClassToTableMap.get(entityRelation.entityUri.getModelUri().getModel()))
+              .appendPath(mClassToTableMap.getTableForClass(entityRelation.entityUri.getModelUri().getModel()))
               .appendPath(String.valueOf(entityRelation.entityUri.getId()));
 
           return true;
@@ -261,10 +260,10 @@ public class AutoUris<TModel extends DbTableModel & MicroOrmModel> implements Mo
     @Override
     public CustomUri model(Class<?> model) {
       Preconditions.checkNotNull(model);
-      Preconditions.checkArgument(mClassToTableMap.containsKey(model), "Model %s is not present in supplied model graph", model.getSimpleName());
+      Preconditions.checkArgument(mClassToTableMap.hasClass(model), "Model %s is not present in supplied model graph", model.getSimpleName());
 
       CustomUriImpl customUri = new CustomUriImpl(this);
-      customUri.pathSegments.add(mClassToTableMap.get(model));
+      customUri.pathSegments.add(mClassToTableMap.getTableForClass(model));
       return customUri;
     }
 
@@ -277,11 +276,11 @@ public class AutoUris<TModel extends DbTableModel & MicroOrmModel> implements Mo
     public CustomUri path(Object path) {
       Preconditions.checkNotNull(path);
       Preconditions.checkArgument(
-          !mClassToTableMap.containsValue(path.toString()),
+          !mClassToTableMap.hasTable(path.toString()),
           "%s is reserved for model(%s.class) and path(%s.class) calls",
           path.toString(),
-          mClassToTableMap.inverse().get(path.toString()),
-          mClassToTableMap.inverse().get(path.toString())
+          mClassToTableMap.getClassForTable(path.toString()),
+          mClassToTableMap.getClassForTable(path.toString())
       );
 
       CustomUriImpl customUri = new CustomUriImpl(this);
@@ -292,10 +291,10 @@ public class AutoUris<TModel extends DbTableModel & MicroOrmModel> implements Mo
     @Override
     public CustomUri path(Class<?> model) {
       Preconditions.checkNotNull(model);
-      Preconditions.checkArgument(mClassToTableMap.containsKey(model), "Model %s is not present in supplied model graph", model.getSimpleName());
+      Preconditions.checkArgument(mClassToTableMap.hasClass(model), "Model %s is not present in supplied model graph", model.getSimpleName());
 
       CustomUriImpl customUri = new CustomUriImpl(this);
-      customUri.pathSegments.add(mClassToTableMap.get(model));
+      customUri.pathSegments.add(mClassToTableMap.getTableForClass(model));
       return customUri;
     }
 
@@ -401,7 +400,7 @@ public class AutoUris<TModel extends DbTableModel & MicroOrmModel> implements Mo
       }
 
       return builder
-          .appendPath(mClassToTableMap.get(getModel()))
+          .appendPath(mClassToTableMap.getTableForClass(getModel()))
           .build();
     }
 
@@ -510,7 +509,7 @@ public class AutoUris<TModel extends DbTableModel & MicroOrmModel> implements Mo
       Uri.Builder builder = new Uri.Builder()
           .scheme(ContentResolver.SCHEME_CONTENT)
           .authority(mAuthority)
-          .appendPath(mClassToTableMap.get(getModelUri().getModel()))
+          .appendPath(mClassToTableMap.getTableForClass(getModelUri().getModel()))
           .appendPath(String.valueOf(getId()));
 
       appendRelationsAsParams(builder);
@@ -665,11 +664,11 @@ public class AutoUris<TModel extends DbTableModel & MicroOrmModel> implements Mo
     }
 
     protected boolean isModel(String pathSegment) {
-      return mClassToTableMap.containsValue(pathSegment);
+      return mClassToTableMap.hasTable(pathSegment);
     }
 
     protected Class<?> getModel(String pathSegment) {
-      return mClassToTableMap.inverse().get(pathSegment);
+      return mClassToTableMap.getClassForTable(pathSegment);
     }
 
     protected abstract AutoUriParser parseSegment(Uri uri, String pathSegment, boolean isLastSegment);
