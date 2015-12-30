@@ -41,11 +41,11 @@ public class AutoUris<TModel extends DatabaseModel & PojoModel> implements Model
   private final ClassToTable<TModel> mClassToTableMap;
   private final Table<Class<?>, Class<?>, Set<String>> mRelationsByClasses;
 
-  AutoUris(ModelGraph<TModel> modelGraph, String authority, String idColumnName) {
+  AutoUris(ModelGraph<TModel> modelGraph, ClassToTable<TModel> classToTable, String authority, String idColumnName) {
     mAuthority = authority;
     mIdColumnName = idColumnName;
 
-    mClassToTableMap = new ClassToTable<>(modelGraph);
+    mClassToTableMap = classToTable;
 
     final Table<Class<?>, Class<?>, Set<String>> relationsByClass = HashBasedTable.create();
 
@@ -100,7 +100,11 @@ public class AutoUris<TModel extends DatabaseModel & PojoModel> implements Model
   }
 
   public static <T extends DatabaseModel & PojoModel> AuthoritySelector<T> from(ModelGraph<T> modelGraph) {
-    return new Builder<T>(modelGraph);
+    return new Builder<T>(modelGraph, new ClassToTable<>(modelGraph));
+  }
+
+  public static <T extends DatabaseModel & PojoModel> AuthoritySelector<T> from(ModelGraph<T> modelGraph, ClassToTable<T> classToTable) {
+    return new Builder<T>(modelGraph, classToTable);
   }
 
   public String getAuthority() {
@@ -109,11 +113,13 @@ public class AutoUris<TModel extends DatabaseModel & PojoModel> implements Model
 
   public static class Builder<TModel extends DatabaseModel & PojoModel> implements AuthoritySelector<TModel> {
     private final ModelGraph<TModel> mModelGraph;
+    private final ClassToTable<TModel> mClassToTable;
     private String mIdColumnName = BaseColumns._ID;
     private String mAuthority;
 
-    Builder(ModelGraph<TModel> modelGraph) {
+    Builder(ModelGraph<TModel> modelGraph, ClassToTable<TModel> classToTable) {
       mModelGraph = modelGraph;
+      mClassToTable = classToTable;
     }
 
     public Builder<TModel> defaultIdColumn(String idColumnName) {
@@ -122,7 +128,7 @@ public class AutoUris<TModel extends DatabaseModel & PojoModel> implements Model
     }
 
     public AutoUris<TModel> build() {
-      return new AutoUris<TModel>(mModelGraph, mAuthority, mIdColumnName);
+      return new AutoUris<TModel>(mModelGraph, mClassToTable, mAuthority, mIdColumnName);
     }
 
     @Override
@@ -621,8 +627,10 @@ public class AutoUris<TModel extends DatabaseModel & PojoModel> implements Model
 
   public AutoUri getAutoUri(Uri uri) {
     Preconditions.checkNotNull(uri);
-    Preconditions.checkArgument(uri.getScheme().equals(ContentResolver.SCHEME_CONTENT));
-    Preconditions.checkArgument(uri.getAuthority().equals(mAuthority));
+    Preconditions.checkArgument(uri.getScheme().equals(ContentResolver.SCHEME_CONTENT),
+        "invalid uri scheme: %s, (expected: %s), uri: %s", uri.getScheme(), ContentResolver.SCHEME_CONTENT, uri);
+    Preconditions.checkArgument(uri.getAuthority().equals(mAuthority),
+        "invalid uri authority: %s (expected: %s), uri: %s", uri.getAuthority(), mAuthority, uri);
 
     return mParsingCache.get(uri);
   }

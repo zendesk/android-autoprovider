@@ -39,6 +39,6 @@ public final class ClassToTable<TModel extends DatabaseModel & PojoModel> {
   }
 
   public boolean hasTable(String table) {
-    return mClassToTableBiMap.inverse().containsKey(table);
+    return mClassToTableBiMap.containsValue(table);
   }
 }

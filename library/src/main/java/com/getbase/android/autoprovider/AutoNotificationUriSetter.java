@@ -1,5 +1,6 @@
 package com.getbase.android.autoprovider;
 
+import com.getbase.android.db.fluentsqlite.Query;
 import com.getbase.android.db.fluentsqlite.Query.QueryBuilder;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -54,6 +55,11 @@ public class AutoNotificationUriSetter<TModel extends DatabaseModel & PojoModel>
     mAutoUris = autoUris;
   }
 
+  public MultiUriCursorWrapper setNotificationUris(Cursor cursor, Query query) {
+    return new MultiUriCursorWrapper(cursor)
+        .withNotificationUris(mContentResolver, getUris(query));
+  }
+
   public MultiUriCursorWrapper setNotificationUris(Cursor cursor, QueryBuilder query) {
     return new MultiUriCursorWrapper(cursor)
         .withNotificationUris(mContentResolver, getUris(query));
@@ -66,6 +72,10 @@ public class AutoNotificationUriSetter<TModel extends DatabaseModel & PojoModel>
 
   public ImmutableSet<Uri> getUris(String rawQuery) {
     return getUris(mTablesFinder.getTablesFromRawSql(rawQuery));
+  }
+
+  private ImmutableSet<Uri> getUris(Query query) {
+    return getUris(query.getTables());
   }
 
   public ImmutableSet<Uri> getUris(QueryBuilder queryBuilder) {

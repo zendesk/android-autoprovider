@@ -2,6 +2,7 @@ package com.getbase.android.autoprovider;
 
 import com.google.common.collect.Iterables;
 
+import android.annotation.TargetApi;
 import android.content.ContentResolver;
 import android.database.ContentObservable;
 import android.database.ContentObserver;
@@ -82,13 +83,18 @@ public class MultiUriCursorWrapper extends CursorWrapper {
     mContentObservable.registerObserver(observer);
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-      for (Uri changedByUri : mChangedByUris) {
-        observer.dispatchChange(false, changedByUri);
-      }
+      dispatchChangeForUris(observer);
     } else {
       if (!mChangedByUris.isEmpty()) {
         observer.dispatchChange(false);
       }
+    }
+  }
+
+  @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+  private void dispatchChangeForUris(ContentObserver observer) {
+    for (Uri changedByUri : mChangedByUris) {
+      observer.dispatchChange(false, changedByUri);
     }
   }
 
@@ -100,6 +106,7 @@ public class MultiUriCursorWrapper extends CursorWrapper {
     }
   }
 
+  @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
   @SuppressWarnings("deprecation")
   private void onChange(boolean selfChange, Uri uri) {
     synchronized (mSelfObserverLock) {
