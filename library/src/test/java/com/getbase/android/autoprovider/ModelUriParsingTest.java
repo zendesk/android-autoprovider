@@ -1,6 +1,6 @@
 package com.getbase.android.autoprovider;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static com.google.common.truth.Truth.assertThat;
 
 import com.getbase.android.autoprovider.AutoUris;
 import com.getbase.android.autoprovider.ModelUri;

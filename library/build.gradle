@@ -1,7 +1,8 @@
 apply plugin: 'com.android.library'
+apply plugin: 'com.github.ben-manes.versions'
 
 android {
-  compileSdkVersion 21
+  compileSdkVersion 22
   buildToolsVersion "21.1.2"
 
   compileOptions {
@@ -11,45 +12,36 @@ android {
 
   defaultConfig {
     minSdkVersion 14
-    targetSdkVersion 21
+    targetSdkVersion 22
     versionName project.VERSION_NAME
     versionCode Integer.parseInt(project.VERSION_CODE)
     consumerProguardFiles 'consumer-proguard-rules.pro'
   }
-}
 
-apply plugin: 'android-unit-test'
-
-androidUnitTest {
-  testTasks {
-    all {
-      jvmArgs '-noverify'
-      jvmArgs '-XX:MaxPermSize=256m'
+  testOptions.unitTests.all {
+    testLogging {
+      events 'passed', 'skipped', 'failed', 'standardOut', 'standardError'
+      maxHeapSize "2048m"
+      jvmArgs '-noverify', '-XX:MaxPermSize=256m'
     }
   }
-}
-
-repositories {
-  mavenLocal()
 }
 
 dependencies {
   testCompile('junit:junit:4.12') {
     exclude module: 'hamcrest-core'
   }
-  testCompile 'org.easytesting:fest-assert-core:2.0M10'
   testCompile 'org.robolectric:robolectric:2.4'
   testCompile 'org.mockito:mockito-all:1.9.5'
-  testCompile 'com.google.android:android:4.1.1.4'
-  testCompile 'com.getbase.android.schema:library:0.6'
+  testCompile 'com.google.truth:truth:0.28'
 
-  compile 'com.google.guava:guava:16.0'
-  compile 'com.android.support:support-annotations:19.1.0'
-  compile 'org.chalup.thneed:thneed:0.5'
-  compile 'com.getbase.android.db:library:0.10.1'
-  compile 'org.chalup.microorm:microorm:0.5'
+  compile 'com.google.guava:guava:18.0'
+  compile 'com.android.support:support-annotations:22.2.1'
+  compile 'org.chalup.thneed:thneed:0.7'
+  compile 'com.getbase.android.db:library:0.13.1'
+  compile 'org.chalup.microorm:microorm:0.6.2'
   compile 'com.getbase.android.forger:forger:0.1'
-  compile 'com.android.support:support-v4:21.0.0'
+  compile 'com.android.support:support-v4:22.2.1'
   compile 'com.getbase.android.schema:library:0.7'
 }
 

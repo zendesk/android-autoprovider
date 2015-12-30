@@ -7,17 +7,17 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
+import android.support.annotation.NonNull;
+
 import java.util.HashSet;
 import java.util.Locale;
-
-import javax.annotation.Nonnull;
 
 public class SqliteViewDependenciesResolver {
   private final LoadingCache<String, ImmutableSet<String>> mDependencies = CacheBuilder.newBuilder().build(
       new CacheLoader<String, ImmutableSet<String>>() {
 
         @Override
-        public ImmutableSet<String> load(@Nonnull String viewOrTableName) throws Exception {
+        public ImmutableSet<String> load(@NonNull String viewOrTableName) throws Exception {
           viewOrTableName = viewOrTableName.toLowerCase(Locale.US);
 
           if (mSchemaHelper.getTables().contains(viewOrTableName)) {
