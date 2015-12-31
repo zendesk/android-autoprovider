@@ -24,13 +24,13 @@ public class MultiUriCursorWrapper extends CursorWrapper {
   protected boolean mClosed;
   protected ContentResolver mContentResolver;
 
-  private final LinkedHashSet<Uri> mNotifyUris = new LinkedHashSet<Uri>();
+  private final LinkedHashSet<Uri> mNotifyUris = new LinkedHashSet<>();
 
   private final Object mSelfObserverLock = new Object();
   private ContentObserver mSelfObserver;
   private boolean mSelfObserverRegistered;
 
-  private final LinkedHashSet<Uri> mChangedByUris = new LinkedHashSet<Uri>();
+  private final LinkedHashSet<Uri> mChangedByUris = new LinkedHashSet<>();
 
   private final ContentObservable mContentObservable = new ContentObservable();
 
@@ -187,7 +187,7 @@ public class MultiUriCursorWrapper extends CursorWrapper {
 
     public SelfContentObserver(MultiUriCursorWrapper cursor) {
       super(null);
-      mCursor = new WeakReference<MultiUriCursorWrapper>(cursor);
+      mCursor = new WeakReference<>(cursor);
     }
 
     @Override

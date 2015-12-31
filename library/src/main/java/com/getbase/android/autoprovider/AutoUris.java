@@ -101,11 +101,11 @@ public class AutoUris<TModel extends DatabaseModel & PojoModel> implements Model
   }
 
   public static <T extends DatabaseModel & PojoModel> AuthoritySelector<T> from(ModelGraph<T> modelGraph) {
-    return new Builder<T>(modelGraph, new ClassToTable<>(modelGraph));
+    return new Builder<>(modelGraph, new ClassToTable<>(modelGraph));
   }
 
   public static <T extends DatabaseModel & PojoModel> AuthoritySelector<T> from(ModelGraph<T> modelGraph, ClassToTable<T> classToTable) {
-    return new Builder<T>(modelGraph, classToTable);
+    return new Builder<>(modelGraph, classToTable);
   }
 
   public String getAuthority() {
@@ -129,7 +129,7 @@ public class AutoUris<TModel extends DatabaseModel & PojoModel> implements Model
     }
 
     public AutoUris<TModel> build() {
-      return new AutoUris<TModel>(mModelGraph, mClassToTable, mAuthority, mIdColumnName);
+      return new AutoUris<>(mModelGraph, mClassToTable, mAuthority, mIdColumnName);
     }
 
     @Override
