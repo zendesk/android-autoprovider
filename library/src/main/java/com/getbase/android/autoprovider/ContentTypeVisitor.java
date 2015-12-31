@@ -1,9 +1,9 @@
 package com.getbase.android.autoprovider;
 
 public class ContentTypeVisitor implements AutoUriVisitor<String> {
-  private final ContentTypeProvider mContentTypeProvider;
+  private final ContentTypeProvider<?> mContentTypeProvider;
 
-  public ContentTypeVisitor(ContentTypeProvider contentTypeProvider) {
+  public ContentTypeVisitor(ContentTypeProvider<?> contentTypeProvider) {
     mContentTypeProvider = contentTypeProvider;
   }
 
