@@ -22,7 +22,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.getbase.android:autoprovider:0.1.0'
+    compile 'com.getbase.android.autoprovider:library:0.1.0'
 }
 ```
 
