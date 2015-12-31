@@ -7,20 +7,7 @@ Features
 
 Usage
 =====
-Build the library and install it in local Maven repository:
-```
-./gradlew clean installArchives
-```
-
-Note: right now you'll need [autoindexer](https://github.com/futuresimple/android-autoindexer) and [forger](https://github.com/futuresimple/forger) available in your local Maven repo as well.
-
-Then add the dependency to your `build.gradle`:
-
 ```groovy
-repositories {
-  mavenLocal()
-}
-
 dependencies {
     compile 'com.getbase.android.autoprovider:library:0.1.0'
 }
