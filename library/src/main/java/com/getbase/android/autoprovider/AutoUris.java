@@ -1,6 +1,7 @@
 package com.getbase.android.autoprovider;
 
 import com.google.common.base.Joiner;
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
@@ -364,7 +365,7 @@ public class AutoUris<TModel extends DatabaseModel & PojoModel> implements Model
 
     @Override
     public String toString() {
-      return Objects
+      return MoreObjects
           .toStringHelper(this)
           .add("path", Joiner.on("/").join(pathSegments))
           .add("relatedTo", Joiner.on(", ").join(mRelatedEntities.values()))
@@ -473,7 +474,7 @@ public class AutoUris<TModel extends DatabaseModel & PojoModel> implements Model
 
     @Override
     public String toString() {
-      return Objects
+      return MoreObjects
           .toStringHelper(this)
           .add("model", getModel().getSimpleName())
           .add("relatedTo", Joiner.on(", ").join(mRelatedEntities.values()))
@@ -587,7 +588,7 @@ public class AutoUris<TModel extends DatabaseModel & PojoModel> implements Model
 
     @Override
     public String toString() {
-      return Objects
+      return MoreObjects
           .toStringHelper(this)
           .add("id", mId)
           .add("idColumn", mIdColumnName)
