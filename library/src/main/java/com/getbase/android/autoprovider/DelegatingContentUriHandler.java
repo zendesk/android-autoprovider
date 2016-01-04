@@ -1,6 +1,5 @@
 package com.getbase.android.autoprovider;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
 import android.content.ContentValues;
@@ -22,8 +21,6 @@ public class DelegatingContentUriHandler implements ContentUriHandler {
   }
 
   private ContentUriHandler getContentUriHandler(Iterator<ContentUriHandler> iterator, Uri uri, ContentUriAction action) {
-    Preconditions.checkState(iterator.hasNext());
-
     while (iterator.hasNext()) {
       ContentUriHandler handler = iterator.next();
       if (handler.canHandle(uri, action)) {
