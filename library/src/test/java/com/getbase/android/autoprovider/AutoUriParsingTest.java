@@ -2,8 +2,6 @@ package com.getbase.android.autoprovider;
 
 import static com.google.common.truth.Truth.assertThat;
 
-import com.getbase.android.autoprovider.AutoUri;
-import com.getbase.android.autoprovider.AutoUris;
 import com.getbase.android.autoprovider.TestModels.TestModel;
 
 import org.junit.Test;

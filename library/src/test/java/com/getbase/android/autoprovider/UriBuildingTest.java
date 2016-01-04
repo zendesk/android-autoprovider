@@ -3,9 +3,6 @@ package com.getbase.android.autoprovider;
 import static com.getbase.android.autoprovider.TestModels.MODEL_GRAPH;
 import static com.google.common.truth.Truth.assertThat;
 
-import com.getbase.android.autoprovider.AutoUris;
-import com.getbase.android.autoprovider.EntityUri;
-import com.getbase.android.autoprovider.ModelUri;
 import com.getbase.android.autoprovider.TestModels.Contact;
 import com.getbase.android.autoprovider.TestModels.TestModel;
 

@@ -1,7 +1,5 @@
 package com.getbase.android.autoprovider;
 
-import com.getbase.android.autoprovider.AutoUri;
-import com.getbase.android.autoprovider.AutoUris;
 import com.getbase.android.autoprovider.TestModels.Contact;
 import com.getbase.android.autoprovider.TestModels.Deal;
 import com.getbase.android.autoprovider.TestModels.Lead;
