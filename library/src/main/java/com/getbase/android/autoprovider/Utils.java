@@ -7,7 +7,10 @@ import org.chalup.thneed.ModelVisitor;
 import org.chalup.thneed.models.DatabaseModel;
 import org.chalup.thneed.models.PojoModel;
 
-public class Utils {
+public final class Utils {
+  private Utils() {
+  }
+
   public static <TModel extends DatabaseModel & PojoModel> ImmutableBiMap<Class<?>, String> buildClassToTableMap(ModelGraph<TModel> modelGraph) {
     final ImmutableBiMap.Builder<Class<?>, String> classToTableMappingBuilder = ImmutableBiMap.builder();
     modelGraph.accept(new ModelVisitor<TModel>() {
