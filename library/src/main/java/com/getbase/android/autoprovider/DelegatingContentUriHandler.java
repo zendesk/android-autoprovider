@@ -40,17 +40,7 @@ public class DelegatingContentUriHandler implements ContentUriHandler {
   }
 
   public ContentUriHandler getDelegateHandler(Uri uri, ContentUriAction action, ContentUriHandler skipPast) {
-    return getContentUriHandler(advancePast(mHandlers.iterator(), skipPast), uri, action);
-  }
-
-  private static <T> Iterator<T> advancePast(Iterator<T> iterator, T element) {
-    while (iterator.hasNext()) {
-      if (iterator.next() == element) {
-        break;
-      }
-    }
-
-    return iterator;
+    return getContentUriHandler(Utils.advancePast(mHandlers.iterator(), skipPast), uri, action);
   }
 
   @Override

@@ -7,6 +7,8 @@ import org.chalup.thneed.ModelVisitor;
 import org.chalup.thneed.models.DatabaseModel;
 import org.chalup.thneed.models.PojoModel;
 
+import java.util.Iterator;
+
 public final class Utils {
   private Utils() {
   }
@@ -20,5 +22,15 @@ public final class Utils {
       }
     });
     return classToTableMappingBuilder.build();
+  }
+
+  static <T> Iterator<T> advancePast(Iterator<T> iterator, T element) {
+    while (iterator.hasNext()) {
+      if (iterator.next() == element) {
+        break;
+      }
+    }
+
+    return iterator;
   }
 }
