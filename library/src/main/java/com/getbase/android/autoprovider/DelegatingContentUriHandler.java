@@ -5,15 +5,12 @@ import com.google.common.collect.Lists;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
-import android.util.Log;
 
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 
 public class DelegatingContentUriHandler implements ContentUriHandler {
-  private static final String TAG = DelegatingContentUriHandler.class.getSimpleName();
-
   private final LinkedList<ContentUriHandler> mHandlers = Lists.newLinkedList();
 
   private ContentUriHandler getHandler(Uri uri, ContentUriAction action) {
@@ -24,7 +21,6 @@ public class DelegatingContentUriHandler implements ContentUriHandler {
     while (iterator.hasNext()) {
       ContentUriHandler handler = iterator.next();
       if (handler.canHandle(uri, action)) {
-        Log.d(TAG, handler.getClass().getSimpleName() + " will handle " + action + " on " + Uri.decode(uri.toString()));
         return handler;
       }
     }
