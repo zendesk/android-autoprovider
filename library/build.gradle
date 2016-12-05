@@ -31,17 +31,17 @@ dependencies {
   testCompile('junit:junit:4.12') {
     exclude module: 'hamcrest-core'
   }
-  testCompile 'org.robolectric:robolectric:3.0'
+  testCompile 'org.robolectric:robolectric:3.1.4'
   testCompile 'org.mockito:mockito-all:1.9.5'
-  testCompile 'com.google.truth:truth:0.28'
+  testCompile 'com.google.truth:truth:0.30'
 
   compile 'com.google.guava:guava:18.0'
-  compile 'com.android.support:support-annotations:22.2.1'
+  compile 'com.android.support:support-annotations:23.1.1'
   compile 'org.chalup.thneed:thneed:0.7'
-  compile 'com.getbase.android.db:library:0.13.1'
+  compile 'com.getbase.android.db:library:0.13.3'
   compile 'org.chalup.microorm:microorm:0.6.2'
   compile 'com.getbase.android.forger:forger:0.1'
-  compile 'com.android.support:support-v4:22.2.1'
+  compile 'com.android.support:support-v4:23.1.1'
   compile 'com.getbase.android.schema:library:0.7'
 }
 
