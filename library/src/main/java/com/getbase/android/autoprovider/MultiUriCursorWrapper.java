@@ -12,8 +12,11 @@ import android.net.Uri;
 import android.os.Build;
 
 import java.lang.ref.WeakReference;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 public class MultiUriCursorWrapper extends CursorWrapper {
 
@@ -24,7 +27,7 @@ public class MultiUriCursorWrapper extends CursorWrapper {
   protected boolean mClosed;
   protected ContentResolver mContentResolver;
 
-  private final LinkedHashSet<Uri> mNotifyUris = new LinkedHashSet<>();
+  private final Set<Uri> mNotifyUris = new CopyOnWriteArraySet<>();
 
   private final Object mSelfObserverLock = new Object();
   private ContentObserver mSelfObserver;
@@ -129,9 +132,9 @@ public class MultiUriCursorWrapper extends CursorWrapper {
     }
   }
 
-  public MultiUriCursorWrapper withNotificationUris(ContentResolver cr, Iterable<Uri> uris) {
+  public MultiUriCursorWrapper withNotificationUris(ContentResolver cr, Collection<Uri> uris) {
     synchronized (mSelfObserverLock) {
-      Iterables.addAll(mNotifyUris, uris);
+      mNotifyUris.addAll(uris);
       mContentResolver = cr;
       if (mSelfObserver == null) {
         mSelfObserver = new SelfContentObserver(this);
@@ -151,7 +154,7 @@ public class MultiUriCursorWrapper extends CursorWrapper {
     return withNotificationUris(cr, Collections.singletonList(uri));
   }
 
-  public LinkedHashSet<Uri> getNotificationUris() {
+  public Set<Uri> getNotificationUris() {
     return mNotifyUris;
   }
 
