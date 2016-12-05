@@ -12,6 +12,7 @@ import android.net.Uri;
 import android.os.Build;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -96,7 +97,7 @@ public class MultiUriCursorWrapper extends CursorWrapper {
 
   @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
   private void dispatchChangeForUris(ContentObserver observer) {
-    for (Uri changedByUri : mChangedByUris) {
+    for (Uri changedByUri : new ArrayList<>(mChangedByUris)) {
       observer.dispatchChange(false, changedByUri);
     }
   }
