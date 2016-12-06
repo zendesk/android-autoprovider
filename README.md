@@ -9,7 +9,7 @@ Usage
 =====
 ```groovy
 dependencies {
-    compile 'com.getbase.android.autoprovider:library:0.1.0'
+    compile 'com.getbase.android.autoprovider:library:0.2.0'
 }
 ```
 
