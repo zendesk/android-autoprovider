@@ -44,9 +44,8 @@ public class AutoUriHandlerTest {
   @Before
   public void setUp() throws Exception {
     MockitoAnnotations.initMocks(this);
-    TestProvider provider = ProviderMock.provide();
     mContentResolver = RuntimeEnvironment.application.getContentResolver();
-    mDatabase = provider.getDatabase();
+    mDatabase = new TestDatabase(RuntimeEnvironment.application);
     mAutoNotificationUriSetter = new AutoNotificationUriSetter<>(
         mDatabase,
         mContentResolver,
