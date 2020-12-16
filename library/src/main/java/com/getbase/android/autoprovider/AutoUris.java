@@ -24,13 +24,14 @@ import org.chalup.thneed.models.PojoModel;
 import android.content.ContentResolver;
 import android.net.Uri;
 import android.provider.BaseColumns;
-import android.support.annotation.NonNull;
-import android.support.v4.util.LruCache;
 
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Set;
+
+import androidx.annotation.NonNull;
+import androidx.collection.LruCache;
 
 public class AutoUris<TModel extends DatabaseModel & PojoModel> implements ModelUriBuilder, CustomUriBuilder {
   private static final String RELATED_TO_QUERY_PARAM = "relatedTo";
