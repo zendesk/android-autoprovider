@@ -30,7 +30,6 @@ import org.chalup.thneed.models.DatabaseModel;
 import org.chalup.thneed.models.PojoModel;
 
 import android.content.ContentValues;
-import android.database.sqlite.SQLiteOpenHelper;
 
 import java.util.List;
 import java.util.Map;
@@ -40,7 +39,7 @@ import java.util.Set;
 public class CrudOperationsResolver {
   private final BiMap<Class<?>, String> mClassToTableMap;
   private final Table<Class<?>, Class<?>, Map<String, CrudDataProcessor>> mCrudDataProcessors;
-  private final SQLiteOpenHelper mDatabase;
+  private final AutoProviderDatabase mDatabase;
 
   private interface CrudDataProcessor {
     void processSelection(List<Expression> expressions, EntityUri relatedEntity);
@@ -228,7 +227,7 @@ public class CrudOperationsResolver {
     }
   };
 
-  public <TModel extends DatabaseModel & PojoModel> CrudOperationsResolver(SQLiteOpenHelper database, ModelGraph<TModel> modelGraph) {
+  public <TModel extends DatabaseModel & PojoModel> CrudOperationsResolver(AutoProviderDatabase database, ModelGraph<TModel> modelGraph) {
     mDatabase = database;
     mClassToTableMap = Utils.buildClassToTableMap(modelGraph);
     final Table<Class<?>, Class<?>, Map<String, CrudDataProcessor>> crudDataProcessors = HashBasedTable.create();
@@ -261,8 +260,7 @@ public class CrudOperationsResolver {
                 if (relatedEntity.getIdColumn().equals(relationship.mReferencedModelIdColumn)) {
                   values.put(relationship.mLinkedByColumn, relatedEntity.getId());
                 } else {
-                  String id = mQueryBuilderVisitor.visit(relatedEntity).column(relationship.mReferencedModelIdColumn)
-                      .perform(mDatabase.getReadableDatabase())
+                  String id = mDatabase.query(mQueryBuilderVisitor.visit(relatedEntity).column(relationship.mReferencedModelIdColumn))
                       .toOnlyElement(SingleRowTransforms.getColumn(relationship.mReferencedModelIdColumn).asString());
                   values.put(relationship.mLinkedByColumn, id);
                 }
@@ -298,8 +296,7 @@ public class CrudOperationsResolver {
                 if (relatedEntity.getIdColumn().equals(relationship.mParentModelIdColumn)) {
                   values.put(relationship.mLinkedByColumn, relatedEntity.getId());
                 } else {
-                  String id = mQueryBuilderVisitor.visit(relatedEntity).column(relationship.mParentModelIdColumn)
-                      .perform(mDatabase.getReadableDatabase())
+                  String id = mDatabase.query(mQueryBuilderVisitor.visit(relatedEntity).column(relationship.mParentModelIdColumn))
                       .toOnlyElement(SingleRowTransforms.getColumn(relationship.mParentModelIdColumn).asString());
                   values.put(relationship.mLinkedByColumn, id);
                 }
@@ -334,8 +331,7 @@ public class CrudOperationsResolver {
                 if (relatedEntity.getIdColumn().equals(relationship.mModelIdColumn)) {
                   values.put(relationship.mGroupByColumn, relatedEntity.getId());
                 } else {
-                  String id = mQueryBuilderVisitor.visit(relatedEntity).column(relationship.mModelIdColumn)
-                      .perform(mDatabase.getReadableDatabase())
+                  String id = mDatabase.query(mQueryBuilderVisitor.visit(relatedEntity).column(relationship.mModelIdColumn))
                       .toOnlyElement(SingleRowTransforms.getColumn(relationship.mModelIdColumn).asString());
                   values.put(relationship.mGroupByColumn, id);
                 }
@@ -381,8 +377,7 @@ public class CrudOperationsResolver {
                   if (relatedEntity.getIdColumn().equals(relationship.mPolymorphicModelIdColumn)) {
                     values.put(relationship.mIdColumnName, relatedEntity.getId());
                   } else {
-                    String id = mQueryBuilderVisitor.visit(relatedEntity).column(relationship.mPolymorphicModelIdColumn)
-                        .perform(mDatabase.getReadableDatabase())
+                    String id = mDatabase.query(mQueryBuilderVisitor.visit(relatedEntity).column(relationship.mPolymorphicModelIdColumn))
                         .toOnlyElement(SingleRowTransforms.getColumn(relationship.mPolymorphicModelIdColumn).asString());
                     values.put(relationship.mIdColumnName, id);
                   }

@@ -8,9 +8,9 @@ import org.chalup.thneed.ModelVisitor;
 import org.chalup.thneed.models.DatabaseModel;
 import org.chalup.thneed.models.PojoModel;
 
-import android.support.annotation.NonNull;
-
 import java.util.Iterator;
+
+import androidx.annotation.NonNull;
 
 public final class Utils {
   private Utils() {

@@ -1,6 +1,8 @@
 package com.getbase.android.autoprovider;
 
-import static com.google.common.truth.Truth.assertThat;
+import android.content.ContentResolver;
+import android.content.ContentValues;
+import android.database.Cursor;
 
 import com.getbase.android.autoprovider.TestModels.BaseModel;
 import com.getbase.android.autoprovider.TestModels.Contact;
@@ -17,16 +19,13 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
-import android.content.ContentResolver;
-import android.content.ContentValues;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteOpenHelper;
+import static com.google.common.truth.Truth.assertThat;
 
 @Config(sdk = 18, manifest = "./src/main/AndroidManifest.xml")
 @RunWith(RobolectricTestRunner.class)
 public class AutoUriHandlerTest {
   ContentResolver mContentResolver;
-  SQLiteOpenHelper mDatabase;
+  AutoProviderDatabase mDatabase;
 
   private static final AutoUris<TestModel> AUTO_URIS = AutoUris
       .from(TestModels.MODEL_GRAPH)
@@ -44,9 +43,8 @@ public class AutoUriHandlerTest {
   @Before
   public void setUp() throws Exception {
     MockitoAnnotations.initMocks(this);
-    TestProvider provider = ProviderMock.provide();
     mContentResolver = RuntimeEnvironment.application.getContentResolver();
-    mDatabase = provider.getDatabase();
+    mDatabase = new DefaultDatabase(new TestDatabase(RuntimeEnvironment.application));
     mAutoNotificationUriSetter = new AutoNotificationUriSetter<>(
         mDatabase,
         mContentResolver,

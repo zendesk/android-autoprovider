@@ -1,6 +1,7 @@
 package com.getbase.android.autoprovider;
 
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 
 import android.annotation.TargetApi;
 import android.content.ContentResolver;
@@ -16,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
@@ -155,8 +157,8 @@ public class MultiUriCursorWrapper extends CursorWrapper {
     return withNotificationUris(cr, Collections.singletonList(uri));
   }
 
-  public Set<Uri> getNotificationUris() {
-    return mNotifyUris;
+  public List<Uri> getNotificationUris() {
+    return Lists.newArrayList(mNotifyUris);
   }
 
   @Override

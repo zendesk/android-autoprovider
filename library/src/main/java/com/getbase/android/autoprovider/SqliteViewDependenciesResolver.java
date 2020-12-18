@@ -7,10 +7,10 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
-import android.support.annotation.NonNull;
-
 import java.util.HashSet;
 import java.util.Locale;
+
+import androidx.annotation.NonNull;
 
 public class SqliteViewDependenciesResolver {
   private final LoadingCache<String, ImmutableSet<String>> mDependencies = CacheBuilder.newBuilder().build(
