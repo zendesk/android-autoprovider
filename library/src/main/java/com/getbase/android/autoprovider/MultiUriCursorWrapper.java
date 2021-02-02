@@ -16,7 +16,6 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
@@ -36,7 +35,7 @@ public class MultiUriCursorWrapper extends CursorWrapper {
   private ContentObserver mSelfObserver;
   private boolean mSelfObserverRegistered;
 
-  private final LinkedHashSet<Uri> mChangedByUris = new LinkedHashSet<>();
+  private final Set<Uri> mChangedByUris = new CopyOnWriteArraySet<>();
 
   private final ContentObservable mContentObservable = new ContentObservable();
 
@@ -99,7 +98,7 @@ public class MultiUriCursorWrapper extends CursorWrapper {
 
   @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
   private void dispatchChangeForUris(ContentObserver observer) {
-    for (Uri changedByUri : new ArrayList<>(mChangedByUris)) {
+    for (Uri changedByUri : mChangedByUris) {
       observer.dispatchChange(false, changedByUri);
     }
   }

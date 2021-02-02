@@ -20,12 +20,13 @@ import org.robolectric.annotation.Config;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.database.sqlite.SQLiteOpenHelper;
 
 @Config(sdk = 18, manifest = "./src/main/AndroidManifest.xml")
 @RunWith(RobolectricTestRunner.class)
 public class CrudOperationsResolverTest {
   ContentResolver mContentResolver;
-  AutoProviderDatabase mDatabase;
+  SQLiteOpenHelper mDatabase;
   AutoNotificationUriSetter<TestModel> mAutoNotificationUriSetter;
 
   private static final AutoUris<TestModel> AUTO_URIS = AutoUris
@@ -43,7 +44,7 @@ public class CrudOperationsResolverTest {
   public void setUp() throws Exception {
     MockitoAnnotations.initMocks(this);
     mContentResolver = RuntimeEnvironment.application.getContentResolver();
-    mDatabase = new DefaultDatabase(new TestDatabase(RuntimeEnvironment.application));
+    mDatabase = new TestDatabase(RuntimeEnvironment.application);
     mAutoNotificationUriSetter = new AutoNotificationUriSetter<>(
         mDatabase,
         mContentResolver,

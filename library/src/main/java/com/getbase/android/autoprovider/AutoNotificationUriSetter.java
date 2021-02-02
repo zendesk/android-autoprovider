@@ -1,9 +1,5 @@
 package com.getbase.android.autoprovider;
 
-import android.content.ContentResolver;
-import android.database.Cursor;
-import android.net.Uri;
-
 import com.getbase.android.db.fluentsqlite.Query;
 import com.getbase.android.db.fluentsqlite.Query.QueryBuilder;
 import com.google.common.base.Function;
@@ -11,10 +7,15 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableSet;
 
-import java.util.Set;
-
 import org.chalup.thneed.models.DatabaseModel;
 import org.chalup.thneed.models.PojoModel;
+
+import android.content.ContentResolver;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteOpenHelper;
+import android.net.Uri;
+
+import java.util.Set;
 
 public class AutoNotificationUriSetter<TModel extends DatabaseModel & PojoModel> {
 
@@ -24,13 +25,12 @@ public class AutoNotificationUriSetter<TModel extends DatabaseModel & PojoModel>
   private final AutoUris<TModel> mAutoUris;
   private final ClassToTable<TModel> mClassToTable;
 
-  private final Function<String, Iterable<String>> mResolveViewsDependencies =
-      new Function<String, Iterable<String>>() {
-        @Override
-        public Iterable<String> apply(String tableOrView) {
-          return mViewDependenciesResolver.getTables(tableOrView);
-        }
-      };
+  private final Function<String, Iterable<String>> mResolveViewsDependencies = new Function<String, Iterable<String>>() {
+    @Override
+    public Iterable<String> apply(String tableOrView) {
+      return mViewDependenciesResolver.getTables(tableOrView);
+    }
+  };
 
   private final Function<String, Uri> mGetUriForTable = new Function<String, Uri>() {
     @Override
@@ -46,11 +46,7 @@ public class AutoNotificationUriSetter<TModel extends DatabaseModel & PojoModel>
     }
   };
 
-  public AutoNotificationUriSetter(
-      AutoProviderDatabase database,
-      ContentResolver contentResolver,
-      AutoUris<TModel> autoUris,
-      ClassToTable<TModel> classToTable) {
+  public AutoNotificationUriSetter(SQLiteOpenHelper database, ContentResolver contentResolver, AutoUris<TModel> autoUris, ClassToTable<TModel> classToTable) {
     SqliteSchemaHelper schemaHelper = new SqliteSchemaHelper(database);
     mViewDependenciesResolver = new SqliteViewDependenciesResolver(schemaHelper);
     mTablesFinder = new SqliteQueryTablesFinder(schemaHelper);
