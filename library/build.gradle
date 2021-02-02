@@ -38,7 +38,7 @@ dependencies {
   compile 'com.google.guava:guava:30.0-android'
   compile 'androidx.annotation:annotation:1.0.0'
   compile 'org.chalup.thneed:thneed:0.7'
-  compile 'com.getbase.android.db:library:0.13.3'
+  compile 'com.getbase.android.db:library:0.15.0'
   compile 'org.chalup.microorm:microorm:0.6.2'
   compile 'com.getbase.android.forger:forger:0.1'
   compile 'androidx.legacy:legacy-support-v4:1.0.0'
