@@ -1,33 +1,31 @@
 package com.getbase.android.autoprovider;
 
-import android.content.ContentResolver;
-import android.content.ContentValues;
-import android.database.Cursor;
-import android.net.Uri;
-import android.text.TextUtils;
-
 import com.getbase.android.db.fluentsqlite.Delete;
 import com.getbase.android.db.fluentsqlite.Query.QueryBuilder;
 import com.getbase.android.db.fluentsqlite.Update;
-
-import java.util.EnumSet;
 
 import org.chalup.thneed.ModelGraph;
 import org.chalup.thneed.models.DatabaseModel;
 import org.chalup.thneed.models.PojoModel;
 
-public class AutoUriHandler<TModel extends DatabaseModel & PojoModel> implements ContentUriHandler {
+import android.content.ContentResolver;
+import android.content.ContentValues;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteOpenHelper;
+import android.net.Uri;
+import android.text.TextUtils;
+
+import java.util.EnumSet;
+
+public class AutoUriHandler<TModel extends DatabaseModel & PojoModel> extends BaseContentUriHandler {
   private final AutoUris<TModel> mAutoUris;
   private final ContentTypeVisitor mContentTypeVisitor;
   private final CrudOperationsResolver mCrudOperationsResolver;
   private final AutoUriVisitor<EnumSet<ContentUriAction>> mSupportedActionsVisitor;
   private final AutoNotificationUriSetter mAutoNotificationUriSetter;
-  private final AutoProviderDatabase mDatabase;
-  private final ContentResolver mContentResolver;
 
-  public AutoUriHandler(AutoProviderDatabase database, ContentResolver contentResolver, AutoUris<TModel> autoUris, ContentTypeProvider<TModel> contentTypeProvider, ModelGraph<TModel> modelGraph, AutoNotificationUriSetter<TModel> autoNotificationUriSetter) {
-    mDatabase = database;
-    mContentResolver = contentResolver;
+  public AutoUriHandler(SQLiteOpenHelper database, ContentResolver contentResolver, AutoUris<TModel> autoUris, ContentTypeProvider<TModel> contentTypeProvider, ModelGraph<TModel> modelGraph, AutoNotificationUriSetter<TModel> autoNotificationUriSetter) {
+    super(database, contentResolver);
     mAutoUris = autoUris;
     mAutoNotificationUriSetter = autoNotificationUriSetter;
 
@@ -74,15 +72,16 @@ public class AutoUriHandler<TModel extends DatabaseModel & PojoModel> implements
       queryBuilder.orderBy(sortOrder);
     }
     return mAutoNotificationUriSetter.setNotificationUris(
-        mDatabase.query(queryBuilder),
+        queryBuilder.perform(getReadableDb()),
         queryBuilder
     );
   }
 
   public Uri insert(Uri uri, ContentValues values) {
     AutoUri autoUri = mAutoUris.getAutoUri(uri);
-    long id = mDatabase.insertOrThrow(autoUri.accept(mCrudOperationsResolver.getInsertVisitor())
-        .values(values));
+    long id = autoUri.accept(mCrudOperationsResolver.getInsertVisitor())
+        .values(values)
+        .performOrThrow(getWritableDb());
     notifyChange(autoUri);
     return mAutoUris.model(autoUri.getModel()).id(id).toUri();
   }
@@ -93,7 +92,7 @@ public class AutoUriHandler<TModel extends DatabaseModel & PojoModel> implements
     if (!TextUtils.isEmpty(selection)) {
       delete = delete.where(selection, selectionArgs);
     }
-    int count = mDatabase.delete(delete);
+    int count = delete.perform(getWritableDb());
     if (count > 0) {
       notifyChange(autoUri);
     }
@@ -107,7 +106,7 @@ public class AutoUriHandler<TModel extends DatabaseModel & PojoModel> implements
     if (!TextUtils.isEmpty(selection)) {
       update = update.where(selection, selectionArgs);
     }
-    int count = mDatabase.update(update);
+    int count = update.perform(getWritableDb());
     if (count > 0) {
       notifyChange(autoUri);
     }
@@ -115,6 +114,6 @@ public class AutoUriHandler<TModel extends DatabaseModel & PojoModel> implements
   }
 
   private void notifyChange(AutoUri autoUri) {
-    mContentResolver.notifyChange(mAutoUris.model(autoUri.getModel()).toUri(), null, false);
+    getContentResolver().notifyChange(mAutoUris.model(autoUri.getModel()).toUri(), null, false);
   }
 }
