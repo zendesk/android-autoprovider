@@ -1,0 +1,14 @@
+ext {
+    project_developers = {
+        developer {
+            id 'lmac012'
+            name 'Łukasz Maciończyk'
+            email 'lmacionczyk@zendesk.com'
+        }
+        developer {
+            id 'maciejwitowski'
+            name 'Maciej Witowski'
+            email 'mwitowski@zendesk.com'
+        }
+    }
+}
