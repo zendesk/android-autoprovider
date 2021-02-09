@@ -43,13 +43,13 @@ dependencies {
   testImplementation 'org.robolectric:robolectric:4.4'
   testImplementation 'org.mockito:mockito-all:1.10.19'
   testImplementation 'com.google.truth:truth:1.0.1'
+  testImplementation 'com.getbase.android.forger:forger:0.1'
 
   implementation 'com.google.guava:guava:30.0-android'
   implementation 'androidx.annotation:annotation:1.0.0'
   implementation 'org.chalup.thneed:thneed:0.7'
   implementation 'com.getbase.android.db:library:0.15.0'
   implementation 'org.chalup.microorm:microorm:0.6.2'
-  implementation 'com.getbase.android.forger:forger:0.1'
   implementation 'androidx.legacy:legacy-support-v4:1.0.0'
   implementation 'com.getbase.android.schema:library:0.7'
 }
