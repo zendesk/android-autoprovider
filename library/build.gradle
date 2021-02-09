@@ -46,7 +46,7 @@ dependencies {
   testImplementation 'com.getbase.android.forger:forger:0.2'
 
   implementation 'com.google.guava:guava:30.0-android'
-  implementation 'androidx.annotation:annotation:1.0.0'
+  implementation 'androidx.annotation:annotation:1.1.0'
   implementation 'org.chalup.thneed:thneed:0.7'
   implementation 'com.getbase.android.db:library:0.15.0'
   implementation 'org.chalup.microorm:microorm:0.6.2'
