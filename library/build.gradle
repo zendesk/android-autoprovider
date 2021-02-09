@@ -50,7 +50,6 @@ dependencies {
   implementation 'org.chalup.thneed:thneed:0.7'
   implementation 'com.getbase.android.db:library:0.15.0'
   implementation 'org.chalup.microorm:microorm:0.6.2'
-  implementation 'androidx.legacy:legacy-support-v4:1.0.0'
   implementation 'com.getbase.android.schema:library:0.7'
 }
 
