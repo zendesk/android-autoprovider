@@ -2,7 +2,7 @@ ext {
     project_developers = {
         developer {
             id 'lmac012'
-            name 'Łukasz Maciończyk'
+            name 'Łukasz Macionczyk'
             email 'lmacionczyk@zendesk.com'
         }
         developer {
