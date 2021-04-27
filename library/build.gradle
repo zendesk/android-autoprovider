@@ -2,7 +2,7 @@ plugins {
   id 'com.android.library'
   id 'com.github.ben-manes.versions'
   id 'maven-publish'
-  id 'com.jfrog.bintray'
+  id 'signing'
 }
 
 android {
@@ -82,7 +82,6 @@ project.afterEvaluate {
 
 def libraryGroupId = 'com.getbase.android.autoprovider'
 def libraryArtifactId = 'library'
-def libraryVersion = VERSION_NAME
 
 apply from: '../developers.gradle'
 
@@ -101,6 +100,13 @@ def pomConfig = {
   }
 }
 
+ext["signing.keyId"] = System.getenv('SIGNING_KEY_ID')
+ext["signing.password"] = System.getenv('SIGNING_PASSWORD')
+ext["signing.secretKeyRingFile"] = System.getenv('SIGNING_SECRET_KEY_RING_FILE')
+ext["ossrhUsername"] = System.getenv('OSSRH_USERNAME')
+ext["ossrhPassword"] = System.getenv('OSSRH_PASSWORD')
+ext["sonatypeStagingProfileId"] = System.getenv('SONATYPE_STAGING_PROFILE_ID')
+
 afterEvaluate {
   publishing {
     publications {
@@ -111,7 +117,7 @@ afterEvaluate {
         artifact androidJavadocsJar
         groupId = libraryGroupId
         artifactId = libraryArtifactId
-        version = libraryVersion
+        version = project.VERSION_NAME
 
         pom.withXml {
           def root = asNode()
@@ -122,28 +128,28 @@ afterEvaluate {
         }
       }
     }
+    repositories {
+      maven {
+        String releaseUrl = 'https://oss.sonatype.org/service/local/staging/deploy/maven2/'
+        String snapshotUrl = 'https://oss.sonatype.org/content/repositories/snapshots/'
+        url = project.VERSION_NAME.endsWith('SNAPSHOT') ? snapshotUrl : releaseUrl
+
+        credentials {
+          username ossrhUsername
+          password ossrhPassword
+        }
+      }
+    }
   }
 }
 
-bintray {
-  user = System.getenv('BINTRAY_USER')
-  key = System.getenv('BINTRAY_KEY')
+signing {
+  required { !project.VERSION_NAME.endsWith('SNAPSHOT') }
+  sign publishing.publications
+}
 
-  publications = ['release']
-  publish = true
-  override = true
-  pkg {
-    repo = 'maven'
-    userOrg = 'basecrm'
-    name = 'com.getbase.android.autoprovider:library'
-    desc = 'com.getbase.android.autoprovider'
-    licenses = ['Apache-2.0']
-    websiteUrl = 'https://github.com/zendesk/android-autoprovider'
-    vcsUrl = 'https://github.com/zendesk/android-autoprovider.git'
-    publicDownloadNumbers = true
-    version {
-      name = libraryVersion
-      released = new Date()
-    }
+publish {
+  doLast {
+    println "The published version: ${project.VERSION_NAME}"
   }
 }
