@@ -25,7 +25,7 @@
     <dependency>
       <groupId>org.chalup.thneed</groupId>
       <artifactId>thneed</artifactId>
-      <version>0.5</version>
+      <version>0.7</version>
     </dependency>
     <dependency>
       <groupId>com.getbase.autoindexer</groupId>
