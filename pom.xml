@@ -35,7 +35,7 @@
     <dependency>
       <groupId>com.getbase.android.db</groupId>
       <artifactId>library</artifactId>
-      <version>0.10.1</version>
+      <version>0.15.1</version>
     </dependency>
     <dependency>
       <groupId>org.chalup.microorm</groupId>
