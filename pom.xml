@@ -40,7 +40,7 @@
     <dependency>
       <groupId>org.chalup.microorm</groupId>
       <artifactId>microorm</artifactId>
-      <version>0.5</version>
+      <version>0.8.0</version>
     </dependency>
     <dependency>
       <groupId>com.getbase.forger</groupId>
